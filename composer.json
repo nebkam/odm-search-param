@@ -1,0 +1,16 @@
+{
+  "name": "nebkam/odm-search-param",
+  "description": "",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Nebkam\\OdmSearchParam\\": "src"
+    }
+  },
+  "require": {
+    "php": "^7.0",
+    "doctrine/annotations": "^1.6",
+    "alcaeus/mongo-php-adapter": "^1.1",
+    "doctrine/mongodb-odm": "^1.2"
+  }
+}
