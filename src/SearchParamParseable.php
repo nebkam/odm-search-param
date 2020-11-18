@@ -66,7 +66,7 @@ trait SearchParamParseable
 								break;
 
 							case 'exists':
-								$queryBuilder->field($field)->exists(true);
+								$queryBuilder->field($field)->exists((bool) $value);
 								break;
 
 							case 'int':
