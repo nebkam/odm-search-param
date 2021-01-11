@@ -8,9 +8,7 @@
     }
   },
   "require": {
-    "php": "^7.0",
-    "doctrine/annotations": "^1.6",
-    "alcaeus/mongo-php-adapter": "^1.1",
-    "doctrine/mongodb-odm": "^1.2"
+    "php": "^7.2",
+    "doctrine/mongodb-odm": "^2.1"
   }
 }

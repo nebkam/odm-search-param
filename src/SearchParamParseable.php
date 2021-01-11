@@ -5,7 +5,6 @@ namespace Nebkam\OdmSearchParam;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use ReflectionClass;
-use ReflectionException;
 
 trait SearchParamParseable
 	{
@@ -13,7 +12,6 @@ trait SearchParamParseable
 	 * @param Builder $queryBuilder
 	 * @param Reader $annotationReader
 	 * @return Builder
-	 * @throws ReflectionException
 	 */
 	public function parseSearchParam(Builder $queryBuilder, Reader $annotationReader) : Builder
 		{
