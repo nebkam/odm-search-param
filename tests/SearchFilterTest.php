@@ -62,6 +62,39 @@ class SearchFilterTest extends BaseTest
 		self::assertBuiltQueryEquals($queryBuilder, ['virtualBoolProperty' => ['$gte' => 1]]);
 		}
 
+	public function testExists(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->existsProperty = '1';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['existsProperty' => ['$exists' => true]]);
+		}
+
+	public function testRangeIntFrom(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->rangeIntFromProperty = '10';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntFromProperty' => ['$gte' => 10]]);
+		}
+
+	public function testRangeIntTo(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->rangeIntToProperty = '50';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntToProperty' => ['$lte' => 50]]);
+		}
+
 	public function testStringArray(): void
 		{
 		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);

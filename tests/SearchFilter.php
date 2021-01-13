@@ -28,6 +28,24 @@ class SearchFilter
 	public ?bool $virtualBoolProperty = null;
 
 	/**
+	 * @SearchParam(type="exists")
+	 * @var string|null
+	 */
+	public ?string $existsProperty = null;
+
+	/**
+	 * @SearchParam(type="range_int", direction="from")
+	 * @var string|null
+	 */
+	public ?string $rangeIntFromProperty = null;
+
+	/**
+	 * @SearchParam(type="range_int", direction="to")
+	 * @var string|null
+	 */
+	public ?string $rangeIntToProperty = null;
+
+	/**
 	 * @SearchParam(type="string_array")
 	 * @var string[]|null
 	 */
