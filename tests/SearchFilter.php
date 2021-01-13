@@ -83,15 +83,8 @@ class SearchFilter
 	public ?string $aliasProperty = null;
 
 	/**
-	 * @SearchParam(callback="setCustomValue")
+	 * @SearchParam(callable={"Nebkam\OdmSearchParam\Tests\SearchFilterDependency", "setFoo"})
 	 * @var int|null
 	 */
-	public ?int $callbackProperty = null;
-
-	public function setCustomValue(Builder $queryBuilder, $value): Builder
-		{
-		$queryBuilder->field('foo')->equals($value);
-
-		return $queryBuilder;
-		}
+	public ?int $callableProperty = null;
 	}

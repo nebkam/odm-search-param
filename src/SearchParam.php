@@ -24,9 +24,7 @@ class SearchParam
 	 */
 	public ?string $field = null;
 	/**
-	 * Method name on the search filter
-	 * that's being called with the query builder and filter property value as an arguments
-	 * and returns the decorated query builder
+	 * Method to call with the query builder, filter property value and the whole filter instance as arguments
 	 */
-	public ?string $callback = null;
+	public ?array $callable = null;
 	}

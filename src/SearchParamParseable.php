@@ -82,10 +82,10 @@ trait SearchParamParseable
 								break;
 
 							default:
-								//TODO use a real callable
-								if ($annotation->callback)
+								if ($annotation->callable
+									&& is_callable($annotation->callable))
 									{
-									$queryBuilder = $this->{$annotation->callback}($queryBuilder,$value);
+									call_user_func($annotation->callable, $queryBuilder, $value, $this);
 									}
 								break;
 							}
