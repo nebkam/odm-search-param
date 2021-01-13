@@ -16,6 +16,12 @@ class SearchFilter
 	public ?string $stringProperty = null;
 
 	/**
+	 * @SearchParam(type="int")
+	 * @var string|null
+	 */
+	public ?string $intProperty = null;
+
+	/**
 	 * @SearchParam(type="bool")
 	 * @var bool|null
 	 */

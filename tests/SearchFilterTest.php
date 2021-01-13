@@ -29,6 +29,17 @@ class SearchFilterTest extends BaseTest
 		self::assertBuiltQueryEquals($queryBuilder, ['stringProperty' => 'foo']);
 		}
 
+	public function testInt(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->intProperty = '1';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['intProperty' => 1]);
+		}
+
 	public function testBool(): void
 		{
 		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
@@ -158,7 +169,7 @@ class SearchFilterTest extends BaseTest
 		$debug = $builder->getQuery()->debug();
 		self::assertArrayHasKey('query', $debug);
 		self::assertIsArray($debug['query']);
-		self::assertEquals($query, $debug['query']);
+		self::assertSame($query, $debug['query']);
 
 		return $debug['query'];
 		}
