@@ -2,6 +2,7 @@
 
 namespace Nebkam\OdmSearchParam\Tests;
 
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Nebkam\OdmSearchParam\SearchParam;
 use Nebkam\OdmSearchParam\SearchParamParseable;
 
@@ -80,4 +81,17 @@ class SearchFilter
 	 * @var string|null
 	 */
 	public ?string $aliasProperty = null;
+
+	/**
+	 * @SearchParam(callback="setCustomValue")
+	 * @var int|null
+	 */
+	public ?int $callbackProperty = null;
+
+	public function setCustomValue(Builder $queryBuilder, $value): Builder
+		{
+		$queryBuilder->field('foo')->equals($value);
+
+		return $queryBuilder;
+		}
 	}

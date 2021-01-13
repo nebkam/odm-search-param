@@ -164,6 +164,17 @@ class SearchFilterTest extends BaseTest
 		self::assertBuiltQueryEquals($queryBuilder, ['alias' => 'foo']);
 		}
 
+	public function testCallbackField(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->callbackProperty = 4;
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['foo' => 4]);
+		}
+
 	private static function assertBuiltQueryEquals(Builder $builder, array $query): array
 		{
 		$debug = $builder->getQuery()->debug();
