@@ -98,8 +98,8 @@ $searchFilter->setStatus($queryBuilder, $propertyValue);
 ```
 
 ## TODO
-- <sup id="footnote1">1</sup> use `PropertyAccessor` to allow using getters or ReflectionClass's `setAccessible` to allow using private properties
-- <sup id="footnote2">2</sup> add `float` type
-- <sup id="footnote3">3</sup> allow choosing between inclusive and exclusive (`gt` or `gte`, `lt` or `lte`) queries for `range` type
-- <sup id="footnote4">4</sup> allow passing real PHP callables to as callbacks
-- parse DocBlock annotations to guess the type automatically
+- Guess property type automatically (PHP7.4 property type, DocBlock annotations...)
+- Allow passing real PHP callables to as callbacks
+- Allow method annotating (getters etc.)
+- Add `float` type
+- Allow choosing between inclusive and exclusive (`gt` or `gte`, `lt` or `lte`) queries for `range` type
