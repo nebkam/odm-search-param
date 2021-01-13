@@ -3,6 +3,7 @@
 namespace Nebkam\OdmSearchParam\Tests;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ODM\MongoDB\Query\Builder;
 use Nebkam\OdmSearchParam\Tests\Documents\SearchableDocument;
 
 class SearchFilterTest extends BaseTest
@@ -13,9 +14,8 @@ class SearchFilterTest extends BaseTest
 
 		$filter = new SearchFilter();
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertEmpty($debug['query']);
+
+		self::assertBuiltQueryEquals($queryBuilder, []);
 		}
 
 	public function testString(): void
@@ -25,10 +25,8 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->stringProperty = 'foo';
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertEquals(['stringProperty' => 'foo'], $debug['query']);
+
+		self::assertBuiltQueryEquals($queryBuilder, ['stringProperty' => 'foo']);
 		}
 
 	public function testBool(): void
@@ -38,11 +36,8 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->boolProperty = true;
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertArrayHasKey('boolProperty', $debug['query']);
-		self::assertTrue($debug['query']['boolProperty']);
+
+		self::assertBuiltQueryEquals($queryBuilder, ['boolProperty' => true]);
 		}
 
 	public function testBoolFalse(): void
@@ -52,11 +47,8 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->boolProperty = false;
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertArrayHasKey('boolProperty', $debug['query']);
-		self::assertFalse($debug['query']['boolProperty']);
+
+		self::assertBuiltQueryEquals($queryBuilder, ['boolProperty' => false]);
 		}
 
 	public function testVirtualBool(): void
@@ -66,12 +58,8 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->virtualBoolProperty = true;
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertArrayHasKey('virtualBoolProperty', $debug['query']);
-		self::assertArrayHasKey('$gte', $debug['query']['virtualBoolProperty']);
-		self::assertEquals(1, $debug['query']['virtualBoolProperty']['$gte']);
+
+		self::assertBuiltQueryEquals($queryBuilder, ['virtualBoolProperty' => ['$gte' => 1]]);
 		}
 
 	public function testStringArray(): void
@@ -81,12 +69,8 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->stringArrayProperty = ['foo', 'bar'];
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertArrayHasKey('stringArrayProperty', $debug['query']);
-		self::assertArrayHasKey('$in', $debug['query']['stringArrayProperty']);
-		self::assertEquals(['foo', 'bar'], $debug['query']['stringArrayProperty']['$in']);
+
+		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayProperty' => ['$in' => ['foo', 'bar']]]);
 		}
 
 	public function testIntegerArray(): void
@@ -96,15 +80,11 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->integerArrayProperty = ['1', '2'];
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
-		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertArrayHasKey('integerArrayProperty', $debug['query']);
-		self::assertArrayHasKey('$in', $debug['query']['integerArrayProperty']);
-		self::assertEquals([1, 2], $debug['query']['integerArrayProperty']['$in']);
+
+		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['integerArrayProperty' => ['$in' => [1, 2]]]);
 		// Test casting
-		self::assertIsInt($debug['query']['integerArrayProperty']['$in'][0]);
-		self::assertIsInt($debug['query']['integerArrayProperty']['$in'][1]);
+		self::assertIsInt($builtQuery['integerArrayProperty']['$in'][0]);
+		self::assertIsInt($builtQuery['integerArrayProperty']['$in'][1]);
 		}
 
 	public function testFieldAlias(): void
@@ -114,9 +94,17 @@ class SearchFilterTest extends BaseTest
 		$filter = new SearchFilter();
 		$filter->aliasProperty = 'foo';
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
-		$debug = $queryBuilder->getQuery()->debug();
+
+		self::assertBuiltQueryEquals($queryBuilder, ['alias' => 'foo']);
+		}
+
+	private static function assertBuiltQueryEquals(Builder $builder, array $query): array
+		{
+		$debug = $builder->getQuery()->debug();
 		self::assertArrayHasKey('query', $debug);
-		self::assertNotEmpty($debug['query']);
-		self::assertEquals(['alias' => 'foo'], $debug['query']);
+		self::assertIsArray($debug['query']);
+		self::assertEquals($query, $debug['query']);
+
+		return $debug['query'];
 		}
 	}
