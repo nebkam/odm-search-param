@@ -95,6 +95,28 @@ class SearchFilterTest extends BaseTest
 		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntToProperty' => ['$lte' => 50]]);
 		}
 
+	public function testRangeFloatFrom(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->rangeFloatFromProperty = '1.1';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeFloatFromProperty' => ['$gte' => 1.1]]);
+		}
+
+	public function testRangeFloatTo(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->rangeFloatToProperty = '5.0';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeFloatToProperty' => ['$lte' => 5.0]]);
+		}
+
 	public function testStringArray(): void
 		{
 		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);

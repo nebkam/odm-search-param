@@ -46,6 +46,18 @@ class SearchFilter
 	public ?string $rangeIntToProperty = null;
 
 	/**
+	 * @SearchParam(type="range_float", direction="from")
+	 * @var string|null
+	 */
+	public ?string $rangeFloatFromProperty = null;
+
+	/**
+	 * @SearchParam(type="range_float", direction="to")
+	 * @var string|null
+	 */
+	public ?string $rangeFloatToProperty = null;
+
+	/**
 	 * @SearchParam(type="string_array")
 	 * @var string[]|null
 	 */
