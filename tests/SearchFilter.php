@@ -16,10 +16,16 @@ class SearchFilter
 	public ?string $stringProperty = null;
 
 	/**
-	 * @SearchParam(type="string", field="alias")
-	 * @var string|null
+	 * @SearchParam(type="bool")
+	 * @var bool|null
 	 */
-	public ?string $aliasProperty = null;
+	public ?bool $boolProperty = null;
+
+	/**
+	 * @SearchParam(type="virtual_bool")
+	 * @var bool|null
+	 */
+	public ?bool $virtualBoolProperty = null;
 
 	/**
 	 * @SearchParam(type="string_array")
@@ -32,4 +38,10 @@ class SearchFilter
 	 * @var int[]|null
 	 */
 	public ?array $integerArrayProperty = null;
+
+	/**
+	 * @SearchParam(type="string", field="alias")
+	 * @var string|null
+	 */
+	public ?string $aliasProperty = null;
 	}

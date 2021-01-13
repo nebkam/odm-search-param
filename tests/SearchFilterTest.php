@@ -31,17 +31,47 @@ class SearchFilterTest extends BaseTest
 		self::assertEquals(['stringProperty' => 'foo'], $debug['query']);
 		}
 
-	public function testStringWithFieldAlias(): void
+	public function testBool(): void
 		{
 		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
 
 		$filter = new SearchFilter();
-		$filter->aliasProperty = 'foo';
+		$filter->boolProperty = true;
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
 		$debug = $queryBuilder->getQuery()->debug();
 		self::assertArrayHasKey('query', $debug);
 		self::assertNotEmpty($debug['query']);
-		self::assertEquals(['alias' => 'foo'], $debug['query']);
+		self::assertArrayHasKey('boolProperty', $debug['query']);
+		self::assertTrue($debug['query']['boolProperty']);
+		}
+
+	public function testBoolFalse(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->boolProperty = false;
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+		$debug = $queryBuilder->getQuery()->debug();
+		self::assertArrayHasKey('query', $debug);
+		self::assertNotEmpty($debug['query']);
+		self::assertArrayHasKey('boolProperty', $debug['query']);
+		self::assertFalse($debug['query']['boolProperty']);
+		}
+
+	public function testVirtualBool(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->virtualBoolProperty = true;
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+		$debug = $queryBuilder->getQuery()->debug();
+		self::assertArrayHasKey('query', $debug);
+		self::assertNotEmpty($debug['query']);
+		self::assertArrayHasKey('virtualBoolProperty', $debug['query']);
+		self::assertArrayHasKey('$gte', $debug['query']['virtualBoolProperty']);
+		self::assertEquals(1, $debug['query']['virtualBoolProperty']['$gte']);
 		}
 
 	public function testStringArray(): void
@@ -75,5 +105,18 @@ class SearchFilterTest extends BaseTest
 		// Test casting
 		self::assertIsInt($debug['query']['integerArrayProperty']['$in'][0]);
 		self::assertIsInt($debug['query']['integerArrayProperty']['$in'][1]);
+		}
+
+	public function testFieldAlias(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->aliasProperty = 'foo';
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+		$debug = $queryBuilder->getQuery()->debug();
+		self::assertArrayHasKey('query', $debug);
+		self::assertNotEmpty($debug['query']);
+		self::assertEquals(['alias' => 'foo'], $debug['query']);
 		}
 	}
