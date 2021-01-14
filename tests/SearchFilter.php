@@ -2,7 +2,6 @@
 
 namespace Nebkam\OdmSearchParam\Tests;
 
-use Doctrine\ODM\MongoDB\Query\Builder;
 use Nebkam\OdmSearchParam\SearchParam;
 use Nebkam\OdmSearchParam\SearchParamParseable;
 
@@ -71,10 +70,22 @@ class SearchFilter
 	public ?array $stringArrayProperty = null;
 
 	/**
+	 * @SearchParam(type="string_array", invert=true)
+	 * @var string[]|null
+	 */
+	public ?array $stringArrayInvertedProperty = null;
+
+	/**
 	 * @SearchParam(type="int_array")
 	 * @var int[]|null
 	 */
 	public ?array $integerArrayProperty = null;
+
+	/**
+	 * @SearchParam(type="int_array", invert=true)
+	 * @var int[]|null
+	 */
+	public ?array $integerArrayInvertedProperty = null;
 
 	/**
 	 * @SearchParam(type="string", field="alias")

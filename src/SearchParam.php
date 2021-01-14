@@ -27,4 +27,9 @@ class SearchParam
 	 * Method to call with the query builder, filter property value and the whole filter instance as arguments
 	 */
 	public ?array $callable = null;
+	/**
+	 * Invert the comparison
+	 * Currently only `int_array` and `string_array` types supported
+	 */
+	public ?bool $invert = null;
 	}

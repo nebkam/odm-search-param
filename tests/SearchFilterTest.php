@@ -139,6 +139,17 @@ class SearchFilterTest extends BaseTest
 		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayProperty' => ['$in' => ['foo', 'bar']]]);
 		}
 
+	public function testStringArrayInverted(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->stringArrayInvertedProperty = ['foo', 'bar'];
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayInvertedProperty' => ['$nin' => ['foo', 'bar']]]);
+		}
+
 	public function testIntegerArray(): void
 		{
 		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
@@ -151,6 +162,20 @@ class SearchFilterTest extends BaseTest
 		// Test casting
 		self::assertIsInt($builtQuery['integerArrayProperty']['$in'][0]);
 		self::assertIsInt($builtQuery['integerArrayProperty']['$in'][1]);
+		}
+
+	public function testIntegerArrayInverted(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->integerArrayInvertedProperty = ['3', '4'];
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+
+		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['integerArrayInvertedProperty' => ['$nin' => [3, 4]]]);
+		// Test casting
+		self::assertIsInt($builtQuery['integerArrayInvertedProperty']['$nin'][0]);
+		self::assertIsInt($builtQuery['integerArrayInvertedProperty']['$nin'][1]);
 		}
 
 	public function testFieldAlias(): void

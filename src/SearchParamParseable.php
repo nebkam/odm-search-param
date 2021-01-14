@@ -35,7 +35,14 @@ trait SearchParamParseable
 								if (count($value) > 0)
 									{
 									$int_values = array_map(static function($item){ return (int) $item; }, $value);
-									$queryBuilder->field($field)->in($int_values);
+									if ($annotation->invert)
+										{
+										$queryBuilder->field($field)->notIn($int_values);
+										}
+									else
+										{
+										$queryBuilder->field($field)->in($int_values);
+										}
 									}
 								break;
 								
@@ -47,7 +54,14 @@ trait SearchParamParseable
 							case 'string_array':
 								if (count($value) > 0)
 									{
-									$queryBuilder->field($field)->in($value);
+									if ($annotation->invert)
+										{
+										$queryBuilder->field($field)->notIn($value);
+										}
+									else
+										{
+										$queryBuilder->field($field)->in($value);
+										}
 									}
 								break;
 
