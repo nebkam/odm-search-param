@@ -2,6 +2,7 @@
 
 namespace Nebkam\OdmSearchParam\Tests;
 
+use DateTime;
 use Nebkam\OdmSearchParam\SearchParam;
 use Nebkam\OdmSearchParam\SearchParamParseable;
 
@@ -38,6 +39,12 @@ class SearchFilter
 	 * @var string|null
 	 */
 	public ?string $existsProperty = null;
+
+	/**
+	 * @SearchParam(type="range", direction="from")
+	 * @var DateTime|null
+	 */
+	public ?DateTime $rangeDateTimeFromProperty = null;
 
 	/**
 	 * @SearchParam(type="range_int", direction="from")

@@ -11,7 +11,7 @@ use Doctrine\Common\Annotations\Annotation\Enum;
 class SearchParam
 	{
 	/**
-	 * @Enum({"string", "string_array", "int", "int_array", "int_gt", "bool", "virtual_bool", "range_int", "range_float", "exists"})
+	 * @Enum({"string", "string_array", "int", "int_array", "int_gt", "bool", "virtual_bool", "range", "range_int", "range_float", "exists"})
 	 */
 	public ?string $type = null;
 	/**

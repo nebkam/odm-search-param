@@ -65,6 +65,12 @@ trait SearchParamParseable
 									}
 								break;
 
+							case 'range':
+								$annotation->direction === 'from'
+									? $queryBuilder->field($field)->gte($value)
+									: $queryBuilder->field($field)->lte($value);
+								break;
+
 							case 'range_int':
 								$annotation->direction === 'from'
 									? $queryBuilder->field($field)->gte( (int) $value)

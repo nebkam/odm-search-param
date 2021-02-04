@@ -2,9 +2,12 @@
 
 namespace Nebkam\OdmSearchParam\Tests;
 
+use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use MongoDB\BSON\UTCDateTime;
 use Nebkam\OdmSearchParam\Tests\Documents\SearchableDocument;
+use function PHPUnit\Framework\assertInstanceOf;
 
 class SearchFilterTest extends BaseTest
 	{
@@ -82,6 +85,18 @@ class SearchFilterTest extends BaseTest
 		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
 
 		self::assertBuiltQueryEquals($queryBuilder, ['existsProperty' => ['$exists' => true]]);
+		}
+
+	public function testDateTimeRangeFrom(): void
+		{
+		$queryBuilder = $this->dm->createQueryBuilder(SearchableDocument::class);
+
+		$filter = new SearchFilter();
+		$filter->rangeDateTimeFromProperty = new DateTime('-1 day');
+		$filter->parseSearchParam($queryBuilder, new AnnotationReader());
+		$debug = $queryBuilder->getQuery()->debug();
+		self::assertArrayHasKey('$gte', $debug['query']['rangeDateTimeFromProperty']);
+		assertInstanceOf(UTCDateTime::class, $debug['query']['rangeDateTimeFromProperty']['$gte']);
 		}
 
 	public function testRangeIntFrom(): void
