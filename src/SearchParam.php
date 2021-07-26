@@ -29,7 +29,7 @@ class SearchParam
 	public ?array $callable = null;
 	/**
 	 * Invert the comparison
-	 * Currently only `int_array` and `string_array` types supported
+	 * Not all types can be inverted
 	 */
 	public ?bool $invert = null;
 	}

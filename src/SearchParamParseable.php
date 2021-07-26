@@ -88,12 +88,26 @@ trait SearchParamParseable
 								break;
 
 							case 'int':
-								$queryBuilder->field($field)->equals((int) $value);
+								if ($annotation->invert)
+									{
+									$queryBuilder->field($field)->notEqual((int) $value);
+									}
+								else
+									{
+									$queryBuilder->field($field)->equals((int) $value);
+									}
 								break;
 
 							case 'string':
 							case 'bool':
-								$queryBuilder->field($field)->equals($value);
+								if ($annotation->invert)
+									{
+									$queryBuilder->field($field)->notEqual($value);
+									}
+								else
+									{
+									$queryBuilder->field($field)->equals($value);
+									}
 								break;
 
 							case 'virtual_bool':
