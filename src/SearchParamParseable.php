@@ -3,19 +3,18 @@
 namespace Nebkam\OdmSearchParam;
 
 use Doctrine\Common\Annotations\Reader;
+use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use ReflectionClass;
-use ReflectionException;
 
 trait SearchParamParseable
 	{
 	/**
-	 * @param Builder $queryBuilder
+	 * @param Builder|MatchStage $builder
 	 * @param Reader $annotationReader
-	 * @return Builder
-	 * @throws ReflectionException
+	 * @return Builder|MatchStage
 	 */
-	public function parseSearchParam(Builder $queryBuilder, Reader $annotationReader) : Builder
+	public function parseSearchParam($builder, Reader $annotationReader)
 		{
 		$reflectionClass = new ReflectionClass($this);
 
@@ -37,57 +36,91 @@ trait SearchParamParseable
 								if (count($value) > 0)
 									{
 									$int_values = array_map(static function($item){ return (int) $item; }, $value);
-									$queryBuilder->field($field)->in($int_values);
+									if ($annotation->invert)
+										{
+										$builder->field($field)->notIn($int_values);
+										}
+									else
+										{
+										$builder->field($field)->in($int_values);
+										}
 									}
 								break;
 								
 							case 'int_gt':
-									$queryBuilder->field($field)->exists(true);
-									$queryBuilder->field($field)->gte(1);
+									$builder->field($field)->exists(true);
+									$builder->field($field)->gte(1);
 									break;
 
 							case 'string_array':
 								if (count($value) > 0)
 									{
-									$queryBuilder->field($field)->in($value);
+									if ($annotation->invert)
+										{
+										$builder->field($field)->notIn($value);
+										}
+									else
+										{
+										$builder->field($field)->in($value);
+										}
 									}
+								break;
+
+							case 'range':
+								$annotation->direction === 'from'
+									? $builder->field($field)->gte($value)
+									: $builder->field($field)->lte($value);
 								break;
 
 							case 'range_int':
 								$annotation->direction === 'from'
-									? $queryBuilder->field($field)->gte( (int) $value)
-									: $queryBuilder->field($field)->lte( (int) $value);
+									? $builder->field($field)->gte( (int) $value)
+									: $builder->field($field)->lte( (int) $value);
 								break;
 
 							case 'range_float':
 								$annotation->direction === 'from'
-									? $queryBuilder->field($field)->gte( (float) $value)
-									: $queryBuilder->field($field)->lte( (float) $value);
+									? $builder->field($field)->gte( (float) $value)
+									: $builder->field($field)->lte( (float) $value);
 								break;
 
 							case 'exists':
-								$queryBuilder->field($field)->exists((bool) $value);
+								$builder->field($field)->exists((bool) $value);
 								break;
 
 							case 'int':
-								$queryBuilder->field($field)->equals((int) $value);
+								if ($annotation->invert)
+									{
+									$builder->field($field)->notEqual((int) $value);
+									}
+								else
+									{
+									$builder->field($field)->equals((int) $value);
+									}
 								break;
 
 							case 'string':
 							case 'bool':
-								$queryBuilder->field($field)->equals($value);
+								if ($annotation->invert)
+									{
+									$builder->field($field)->notEqual($value);
+									}
+								else
+									{
+									$builder->field($field)->equals($value);
+									}
 								break;
 
 							case 'virtual_bool':
 								//Virtual booleans are stored as integers, but are sent as booleans in search
-								$queryBuilder->field($field)->gte(1);
+								$builder->field($field)->gte(1);
 								break;
 
 							default:
-								//TODO use a real callable
-								if ($annotation->callback)
+								if ($annotation->callable
+									&& is_callable($annotation->callable))
 									{
-									$queryBuilder = $this->{$annotation->callback}($queryBuilder,$value);
+									call_user_func($annotation->callable, $builder, $value, $this);
 									}
 								break;
 							}
@@ -96,6 +129,6 @@ trait SearchParamParseable
 				}
 			}
 
-		return $queryBuilder;
+		return $builder;
 		}
 	}

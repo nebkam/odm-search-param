@@ -9,7 +9,7 @@ is for you if..
 * you don't want to manually map the search parameters to query builder statements
 
 ### Search Filter class
-1. Can be any class with `public` properties [<sup>1</sup>](#footnote1)
+1. Can be any class with `public` properties
 2. Properties should be annotated with [`@SearchParam`](src/SearchParam.php) annotation
 3. Should use the [`SearchParamParseable`](src/SearchParamParseable.php) trait
 4. Shold call `parseSearchParam` with a `QueryBuilder` instance to build the query on
@@ -41,7 +41,7 @@ class SearchFilter {
 $queryBuilder->field('images')->exists(true);
 ```
 
-#### Type casting (`int` type) [<sup>2</sup>](#footnote2)
+#### Type casting (`int` type)
 ```php
 class SearchFilter {
   /**
@@ -68,7 +68,7 @@ $queryBuilder->field('grades')->in($propertyValuesAllCastedToInt);
 ```
 
 
-#### Querying by range (`range_int` and `range_float` types) [<sup>3</sup>](#footnote3)
+#### Querying by range (`range_int` and `range_float` types)
 ```php
 class SearchFilter {
   /**
@@ -80,17 +80,17 @@ class SearchFilter {
 // Builds the query to..
 $queryBuilder->field('price')->gte((int) $propertyValue);
 ```
-#### Custom query building by specifying the filter's method as a callback [<sup>4</sup>](#footnote4)
+#### Custom query building by specifying the static method as a callable
 ```php
 class SearchFilter {
   /**
-  * @SearchParam(callback="setStatus")
+  * @SearchParam(callable={"SearchFilter", "setStatus"})
   * @var string
   */
   public $status;
   
-  public function setStatus($queryBuilder, $propertyValue){
-    // modify $queryBuilder based on $propertyValue
+  public static function setStatus($queryBuilder, $propertyValue, $filter){
+    // modify $queryBuilder based on $propertyValue and/or other properties in $filter
   }
 }
 // Calls the..
@@ -98,8 +98,7 @@ $searchFilter->setStatus($queryBuilder, $propertyValue);
 ```
 
 ## TODO
-- <sup id="footnote1">1</sup> use `PropertyAccessor` to allow using getters or ReflectionClass's `setAccessible` to allow using private properties
-- <sup id="footnote2">2</sup> add `float` type
-- <sup id="footnote3">3</sup> allow choosing between inclusive and exclusive (`gt` or `gte`, `lt` or `lte`) queries for `range` type
-- <sup id="footnote4">4</sup> allow passing real PHP callables to as callbacks
-- parse DocBlock annotations to guess the type automatically
+- Guess property type automatically (PHP7.4 property type, DocBlock annotations...)
+- Allow method annotating (getters etc.)
+- Add `float` type
+- Allow choosing between inclusive and exclusive (`gt` or `gte`, `lt` or `lte`) queries for `range` type
