@@ -8,7 +8,7 @@ use Attribute;
 class SearchParam
 	{
 	public function __construct(
-		public ?Type $type = null
+		public ?SearchParamType $type = null
 	)
 		{
 		}

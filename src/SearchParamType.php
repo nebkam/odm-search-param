@@ -2,7 +2,7 @@
 
 namespace Nebkam\OdmSearchParam;
 
-enum Type
+enum SearchParamType
 	{
 	case String;
 	}
