@@ -4,105 +4,56 @@ namespace Nebkam\OdmSearchParam\Tests;
 
 use DateTime;
 use Nebkam\OdmSearchParam\SearchParam;
-use Nebkam\OdmSearchParam\SearchParamParseable;
+use Nebkam\OdmSearchParam\SearchParamDirection;
+use Nebkam\OdmSearchParam\SearchParamType;
 
 class SearchFilter
 	{
-	use SearchParamParseable;
-
-	/**
-	 * @SearchParam(type="string")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::String)]
 	public ?string $stringProperty = null;
 
-	/**
-	 * @SearchParam(type="int")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::Int)]
 	public ?string $intProperty = null;
 
-	/**
-	 * @SearchParam(type="bool")
-	 * @var bool|null
-	 */
+	#[SearchParam(type: SearchParamType::Bool)]
 	public ?bool $boolProperty = null;
 
-	/**
-	 * @SearchParam(type="virtual_bool")
-	 * @var bool|null
-	 */
+	#[SearchParam(type: SearchParamType::VirtualBool)]
 	public ?bool $virtualBoolProperty = null;
 
-	/**
-	 * @SearchParam(type="exists")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::Exists)]
 	public ?string $existsProperty = null;
 
-	/**
-	 * @SearchParam(type="range", direction="from")
-	 * @var DateTime|null
-	 */
+	#[SearchParam(type: SearchParamType::Range, direction: SearchParamDirection::From)]
 	public ?DateTime $rangeDateTimeFromProperty = null;
 
-	/**
-	 * @SearchParam(type="range_int", direction="from")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::RangeInt, direction: SearchParamDirection::From)]
 	public ?string $rangeIntFromProperty = null;
 
-	/**
-	 * @SearchParam(type="range_int", direction="to")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::RangeInt, direction: SearchParamDirection::To)]
 	public ?string $rangeIntToProperty = null;
 
-	/**
-	 * @SearchParam(type="range_float", direction="from")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::RangeFloat, direction: SearchParamDirection::From)]
 	public ?string $rangeFloatFromProperty = null;
 
-	/**
-	 * @SearchParam(type="range_float", direction="to")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::RangeFloat, direction: SearchParamDirection::To)]
 	public ?string $rangeFloatToProperty = null;
 
-	/**
-	 * @SearchParam(type="string_array")
-	 * @var string[]|null
-	 */
+	#[SearchParam(type: SearchParamType::StringArray)]
 	public ?array $stringArrayProperty = null;
 
-	/**
-	 * @SearchParam(type="string_array", invert=true)
-	 * @var string[]|null
-	 */
+	#[SearchParam(type: SearchParamType::StringArray, invert: true)]
 	public ?array $stringArrayInvertedProperty = null;
 
-	/**
-	 * @SearchParam(type="int_array")
-	 * @var int[]|null
-	 */
+	#[SearchParam(type: SearchParamType::IntArray)]
 	public ?array $integerArrayProperty = null;
 
-	/**
-	 * @SearchParam(type="int_array", invert=true)
-	 * @var int[]|null
-	 */
+	#[SearchParam(type: SearchParamType::IntArray, invert: true)]
 	public ?array $integerArrayInvertedProperty = null;
 
-	/**
-	 * @SearchParam(type="string", field="alias")
-	 * @var string|null
-	 */
+	#[SearchParam(type: SearchParamType::String, field: 'alias')]
 	public ?string $aliasProperty = null;
 
-	/**
-	 * @SearchParam(callable={"Nebkam\OdmSearchParam\Tests\SearchFilterDependency", "setFoo"})
-	 * @var int|null
-	 */
+	#[SearchParam(callable: [SearchFilterDependency::class, 'setFoo'])]
 	public ?int $callableProperty = null;
 	}

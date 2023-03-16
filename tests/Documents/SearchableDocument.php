@@ -2,17 +2,11 @@
 
 namespace Nebkam\OdmSearchParam\Tests\Documents;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
-use Doctrine\ODM\MongoDB\Mapping\Annotations\Id;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-/**
- * @Document()
- */
+#[ODM\Document]
 class SearchableDocument
 	{
-	/**
-	 * @Id
-	 * @var string
-	 */
-	private string $id;
+	#[ODM\Id]
+	public string $id;
 	}
