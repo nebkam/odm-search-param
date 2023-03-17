@@ -12,8 +12,20 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::String)]
 	public ?string $stringProperty = null;
 
+	#[SearchParam(type: SearchParamType::StringArray)]
+	public ?array $stringArrayProperty = null;
+
+	#[SearchParam(type: SearchParamType::StringArray, invert: true)]
+	public ?array $stringArrayInvertedProperty = null;
+
 	#[SearchParam(type: SearchParamType::StringEnum)]
 	public ?StringEnum $stringEnumProperty = null;
+
+	/**
+	 * @var StringEnum[]|null
+	 */
+	#[SearchParam(type: SearchParamType::StringEnumArray)]
+	public ?array $stringEnumArrayProperty = null;
 
 	#[SearchParam(type: SearchParamType::Int)]
 	public ?string $intProperty = null;
@@ -41,12 +53,6 @@ class SearchFilter
 
 	#[SearchParam(type: SearchParamType::RangeFloat, direction: SearchParamDirection::To)]
 	public ?string $rangeFloatToProperty = null;
-
-	#[SearchParam(type: SearchParamType::StringArray)]
-	public ?array $stringArrayProperty = null;
-
-	#[SearchParam(type: SearchParamType::StringArray, invert: true)]
-	public ?array $stringArrayInvertedProperty = null;
 
 	#[SearchParam(type: SearchParamType::IntArray)]
 	public ?array $integerArrayProperty = null;

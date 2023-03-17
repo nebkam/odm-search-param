@@ -134,6 +134,24 @@ class SearchParamParser
 								}
 							break;
 
+						case SearchParamType::StringEnumArray:
+							/**
+							 * @var StringBackedEnum[] $value
+							 */
+							if (count($value) > 0)
+								{
+								$stringValues = array_map(static fn($item) => $item->value, $value);
+								if ($attribute->invert)
+									{
+									$builder->field($field)->notIn($stringValues);
+									}
+								else
+									{
+									$builder->field($field)->in($stringValues);
+									}
+								}
+							break;
+
 						case SearchParamType::VirtualBool:
 							//Virtual booleans are stored as integers, but are sent as booleans in search
 							$builder->field($field)->gte(1);

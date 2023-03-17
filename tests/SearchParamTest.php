@@ -44,6 +44,40 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testStringArray(): void
+		{
+		$filter                      = new SearchFilter();
+		$filter->stringArrayProperty = ['foo', 'bar'];
+		$queryBuilder                = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                  = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                      = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayProperty' => ['$in' => ['foo', 'bar']]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringArrayProperty' => ['$in' => ['foo', 'bar']]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testStringArrayInverted(): void
+		{
+		$filter                              = new SearchFilter();
+		$filter->stringArrayInvertedProperty = ['foo', 'bar'];
+		$queryBuilder                        = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                              = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayInvertedProperty' => ['$nin' => ['foo', 'bar']]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringArrayInvertedProperty' => ['$nin' => ['foo', 'bar']]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testStringEnum(): void
 		{
 		$filter                     = new SearchFilter();
@@ -56,6 +90,23 @@ class SearchParamTest extends BaseTestCase
 		$parser->parse($filter, $matchStage);
 		self::assertBuiltQueryEquals($queryBuilder, ['stringEnumProperty' => 'foo']);
 		self::assertBuiltMatchStageEquals($matchStage, ['stringEnumProperty' => 'foo']);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testStringEnumArray(): void
+		{
+		$filter                          = new SearchFilter();
+		$filter->stringEnumArrayProperty = [StringEnum::FOO, StringEnum::BAR];
+		$queryBuilder                    = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                      = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                          = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringEnumArrayProperty' => ['$in' => [StringEnum::FOO->value, StringEnum::BAR->value]]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringEnumArrayProperty' => ['$in' => [StringEnum::FOO->value, StringEnum::BAR->value]]]);
 		}
 
 	/**
@@ -230,40 +281,6 @@ class SearchParamTest extends BaseTestCase
 		$parser->parse($filter, $matchStage);
 		self::assertBuiltQueryEquals($queryBuilder, ['rangeFloatToProperty' => ['$lte' => 5.0]]);
 		self::assertBuiltMatchStageEquals($matchStage, ['rangeFloatToProperty' => ['$lte' => 5.0]]);
-		}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public function testStringArray(): void
-		{
-		$filter                      = new SearchFilter();
-		$filter->stringArrayProperty = ['foo', 'bar'];
-		$queryBuilder                = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                  = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                      = new SearchParamParser();
-
-		$parser->parse($filter, $queryBuilder);
-		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayProperty' => ['$in' => ['foo', 'bar']]]);
-		self::assertBuiltMatchStageEquals($matchStage, ['stringArrayProperty' => ['$in' => ['foo', 'bar']]]);
-		}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public function testStringArrayInverted(): void
-		{
-		$filter                              = new SearchFilter();
-		$filter->stringArrayInvertedProperty = ['foo', 'bar'];
-		$queryBuilder                        = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                              = new SearchParamParser();
-
-		$parser->parse($filter, $queryBuilder);
-		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['stringArrayInvertedProperty' => ['$nin' => ['foo', 'bar']]]);
-		self::assertBuiltMatchStageEquals($matchStage, ['stringArrayInvertedProperty' => ['$nin' => ['foo', 'bar']]]);
 		}
 
 	/**
