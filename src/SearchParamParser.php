@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use ReflectionClass;
 use ReflectionException;
+use StringBackedEnum;
 
 class SearchParamParser
 	{
@@ -97,11 +98,11 @@ class SearchParamParser
 						case SearchParamType::String:
 							if ($attribute->invert)
 								{
-								$builder->field($field)->notEqual($value);
+								$builder->field($field)->notEqual((string)$value);
 								}
 							else
 								{
-								$builder->field($field)->equals($value);
+								$builder->field($field)->equals((string)$value);
 								}
 							break;
 
@@ -116,6 +117,20 @@ class SearchParamParser
 									{
 									$builder->field($field)->in($value);
 									}
+								}
+							break;
+
+						case SearchParamType::StringEnum:
+							/**
+							 * @var StringBackedEnum $value
+							 */
+							if ($attribute->invert)
+								{
+								$builder->field($field)->notEqual($value->value);
+								}
+							else
+								{
+								$builder->field($field)->equals($value->value);
 								}
 							break;
 

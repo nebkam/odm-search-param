@@ -14,5 +14,6 @@ enum SearchParamType
 	case RangeInt;
 	case String;
 	case StringArray;
+	case StringEnum;
 	case VirtualBool;
 	}

@@ -12,6 +12,9 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::String)]
 	public ?string $stringProperty = null;
 
+	#[SearchParam(type: SearchParamType::StringEnum)]
+	public ?StringEnum $stringEnumProperty = null;
+
 	#[SearchParam(type: SearchParamType::Int)]
 	public ?string $intProperty = null;
 

@@ -44,6 +44,23 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testStringEnum(): void
+		{
+		$filter                     = new SearchFilter();
+		$filter->stringEnumProperty = StringEnum::FOO;
+		$queryBuilder               = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                 = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                     = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringEnumProperty' => 'foo']);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringEnumProperty' => 'foo']);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testInt(): void
 		{
 		$filter              = new SearchFilter();
