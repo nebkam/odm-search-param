@@ -27,6 +27,9 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::IntArray)]
 	public ?array $intArrayProperty = null;
 
+	#[SearchParam(type: SearchParamType::IntEnum)]
+	public ?IntEnum $intEnumProperty = null;
+
 	#[SearchParam(type: SearchParamType::IntArray, invert: true)]
 	public ?array $intArrayInvertedProperty = null;
 

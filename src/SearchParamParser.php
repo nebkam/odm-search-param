@@ -4,6 +4,7 @@ namespace Nebkam\OdmSearchParam;
 
 use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use IntBackedEnum;
 use ReflectionClass;
 use ReflectionException;
 use StringBackedEnum;
@@ -69,6 +70,18 @@ class SearchParamParser
 									{
 									$builder->field($field)->in($int_values);
 									}
+								}
+							break;
+
+						case SearchParamType::IntEnum:
+							/** @var IntBackedEnum $value */
+							if ($attribute->invert)
+								{
+								$builder->field($field)->notEqual($value->value);
+								}
+							else
+								{
+								$builder->field($field)->equals($value->value);
 								}
 							break;
 

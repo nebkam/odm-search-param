@@ -8,6 +8,7 @@ enum SearchParamType
 	case Exists;
 	case Int;
 	case IntArray;
+	case IntEnum;
 	case IntGt;
 	case Range;
 	case RangeFloat;

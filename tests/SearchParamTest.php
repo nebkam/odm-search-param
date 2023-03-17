@@ -129,13 +129,30 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testIntEnum(): void
+		{
+		$filter                  = new SearchFilter();
+		$filter->intEnumProperty = IntEnum::FOO;
+		$queryBuilder            = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage              = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                  = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['intEnumProperty' => IntEnum::FOO->value]);
+		self::assertBuiltMatchStageEquals($matchStage, ['intEnumProperty' => IntEnum::FOO->value]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testIntArray(): void
 		{
 		$filter                   = new SearchFilter();
 		$filter->intArrayProperty = ['1', '2'];
 		$queryBuilder             = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                       = new SearchParamParser();
+		$matchStage               = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                   = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
@@ -157,8 +174,8 @@ class SearchParamTest extends BaseTestCase
 		$filter                           = new SearchFilter();
 		$filter->intArrayInvertedProperty = ['3', '4'];
 		$queryBuilder                     = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                           = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                               = new SearchParamParser();
+		$matchStage                       = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                           = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
