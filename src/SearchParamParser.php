@@ -59,16 +59,14 @@ class SearchParamParser
 						case SearchParamType::IntArray:
 							if (count($value) > 0)
 								{
-								$int_values = array_map(static function ($item) {
-									return (int)$item;
-								}, $value);
+								$intValues = array_map(static fn($item) => (int)$item, $value);
 								if ($attribute->invert)
 									{
-									$builder->field($field)->notIn($int_values);
+									$builder->field($field)->notIn($intValues);
 									}
 								else
 									{
-									$builder->field($field)->in($int_values);
+									$builder->field($field)->in($intValues);
 									}
 								}
 							break;
@@ -82,6 +80,22 @@ class SearchParamParser
 							else
 								{
 								$builder->field($field)->equals($value->value);
+								}
+							break;
+
+						case SearchParamType::IntEnumArray:
+							/** @var IntBackedEnum[] $value */
+							if (count($value) > 0)
+								{
+								$intValues = array_map(static fn($item) => $item->value, $value);
+								if ($attribute->invert)
+									{
+									$builder->field($field)->notIn($intValues);
+									}
+								else
+									{
+									$builder->field($field)->in($intValues);
+									}
 								}
 							break;
 

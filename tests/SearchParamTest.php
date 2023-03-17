@@ -169,6 +169,29 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testIntEnumArray(): void
+		{
+		$filter                       = new SearchFilter();
+		$filter->intEnumArrayProperty = [IntEnum::FOO, IntEnum::BAR];
+		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                       = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['intEnumArrayProperty' => ['$in' => [IntEnum::FOO->value, IntEnum::BAR->value]]]);
+		// Test casting
+		self::assertIsInt($builtQuery['intEnumArrayProperty']['$in'][0]);
+		self::assertIsInt($builtQuery['intEnumArrayProperty']['$in'][1]);
+		$matchExpression = self::assertBuiltMatchStageEquals($matchStage, ['intEnumArrayProperty' => ['$in' => [IntEnum::FOO->value, IntEnum::BAR->value]]]);
+		// Test casting
+		self::assertIsInt($matchExpression['intEnumArrayProperty']['$in'][0]);
+		self::assertIsInt($matchExpression['intEnumArrayProperty']['$in'][1]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testIntArrayInverted(): void
 		{
 		$filter                           = new SearchFilter();

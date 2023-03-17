@@ -30,6 +30,12 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::IntEnum)]
 	public ?IntEnum $intEnumProperty = null;
 
+	/**
+	 * @var IntEnum[]|null
+	 */
+	#[SearchParam(type: SearchParamType::IntEnumArray)]
+	public ?array $intEnumArrayProperty = null;
+
 	#[SearchParam(type: SearchParamType::IntArray, invert: true)]
 	public ?array $intArrayInvertedProperty = null;
 
