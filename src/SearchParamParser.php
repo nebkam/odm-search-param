@@ -4,8 +4,10 @@ namespace Nebkam\OdmSearchParam;
 
 use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use IntBackedEnum;
 use ReflectionClass;
 use ReflectionException;
+use StringBackedEnum;
 
 class SearchParamParser
 	{
@@ -57,16 +59,42 @@ class SearchParamParser
 						case SearchParamType::IntArray:
 							if (count($value) > 0)
 								{
-								$int_values = array_map(static function ($item) {
-									return (int)$item;
-								}, $value);
+								$intValues = array_map(static fn($item) => (int)$item, $value);
 								if ($attribute->invert)
 									{
-									$builder->field($field)->notIn($int_values);
+									$builder->field($field)->notIn($intValues);
 									}
 								else
 									{
-									$builder->field($field)->in($int_values);
+									$builder->field($field)->in($intValues);
+									}
+								}
+							break;
+
+						case SearchParamType::IntEnum:
+							/** @var IntBackedEnum $value */
+							if ($attribute->invert)
+								{
+								$builder->field($field)->notEqual($value->value);
+								}
+							else
+								{
+								$builder->field($field)->equals($value->value);
+								}
+							break;
+
+						case SearchParamType::IntEnumArray:
+							/** @var IntBackedEnum[] $value */
+							if (count($value) > 0)
+								{
+								$intValues = array_map(static fn($item) => $item->value, $value);
+								if ($attribute->invert)
+									{
+									$builder->field($field)->notIn($intValues);
+									}
+								else
+									{
+									$builder->field($field)->in($intValues);
 									}
 								}
 							break;
@@ -97,11 +125,11 @@ class SearchParamParser
 						case SearchParamType::String:
 							if ($attribute->invert)
 								{
-								$builder->field($field)->notEqual($value);
+								$builder->field($field)->notEqual((string)$value);
 								}
 							else
 								{
-								$builder->field($field)->equals($value);
+								$builder->field($field)->equals((string)$value);
 								}
 							break;
 
@@ -115,6 +143,38 @@ class SearchParamParser
 								else
 									{
 									$builder->field($field)->in($value);
+									}
+								}
+							break;
+
+						case SearchParamType::StringEnum:
+							/**
+							 * @var StringBackedEnum $value
+							 */
+							if ($attribute->invert)
+								{
+								$builder->field($field)->notEqual($value->value);
+								}
+							else
+								{
+								$builder->field($field)->equals($value->value);
+								}
+							break;
+
+						case SearchParamType::StringEnumArray:
+							/**
+							 * @var StringBackedEnum[] $value
+							 */
+							if (count($value) > 0)
+								{
+								$stringValues = array_map(static fn($item) => $item->value, $value);
+								if ($attribute->invert)
+									{
+									$builder->field($field)->notIn($stringValues);
+									}
+								else
+									{
+									$builder->field($field)->in($stringValues);
 									}
 								}
 							break;

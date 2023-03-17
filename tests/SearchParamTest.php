@@ -13,7 +13,7 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testNullString(): void
+	public function testEmptyFilter(): void
 		{
 		$filter       = new SearchFilter();
 		$queryBuilder = self::createTestQueryBuilder(SearchableDocument::class);
@@ -27,35 +27,18 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testString(): void
+	public function testFieldAlias(): void
 		{
-		$filter                 = new SearchFilter();
-		$filter->stringProperty = 'foo';
-		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                 = new SearchParamParser();
+		$filter                = new SearchFilter();
+		$filter->aliasProperty = 'foo';
+		$queryBuilder          = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage            = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['stringProperty' => 'foo']);
-		self::assertBuiltMatchStageEquals($matchStage, ['stringProperty' => 'foo']);
-		}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public function testInt(): void
-		{
-		$filter              = new SearchFilter();
-		$filter->intProperty = '1';
-		$queryBuilder        = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser              = new SearchParamParser();
-
-		$parser->parse($filter, $queryBuilder);
-		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['intProperty' => 1]);
-		self::assertBuiltMatchStageEquals($matchStage, ['intProperty' => 1]);
+		self::assertBuiltQueryEquals($queryBuilder, ['alias' => 'foo']);
+		self::assertBuiltMatchStageEquals($matchStage, ['alias' => 'foo']);
 		}
 
 	/**
@@ -95,18 +78,18 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testVirtualBool(): void
+	public function testCallable(): void
 		{
-		$filter                      = new SearchFilter();
-		$filter->virtualBoolProperty = true;
-		$queryBuilder                = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                  = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                      = new SearchParamParser();
+		$filter                   = new SearchFilter();
+		$filter->callableProperty = 4;
+		$queryBuilder             = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage               = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                   = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['virtualBoolProperty' => ['$gte' => 1]]);
-		self::assertBuiltMatchStageEquals($matchStage, ['virtualBoolProperty' => ['$gte' => 1]]);
+		self::assertBuiltQueryEquals($queryBuilder, ['foo' => 4]);
+		self::assertBuiltMatchStageEquals($matchStage, ['foo' => 4]);
 		}
 
 	/**
@@ -129,6 +112,109 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testInt(): void
+		{
+		$filter              = new SearchFilter();
+		$filter->intProperty = '1';
+		$queryBuilder        = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser              = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['intProperty' => 1]);
+		self::assertBuiltMatchStageEquals($matchStage, ['intProperty' => 1]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testIntEnum(): void
+		{
+		$filter                  = new SearchFilter();
+		$filter->intEnumProperty = IntEnum::FOO;
+		$queryBuilder            = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage              = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                  = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['intEnumProperty' => IntEnum::FOO->value]);
+		self::assertBuiltMatchStageEquals($matchStage, ['intEnumProperty' => IntEnum::FOO->value]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testIntArray(): void
+		{
+		$filter                   = new SearchFilter();
+		$filter->intArrayProperty = ['1', '2'];
+		$queryBuilder             = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage               = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                   = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['intArrayProperty' => ['$in' => [1, 2]]]);
+		// Test casting
+		self::assertIsInt($builtQuery['intArrayProperty']['$in'][0]);
+		self::assertIsInt($builtQuery['intArrayProperty']['$in'][1]);
+		$matchExpression = self::assertBuiltMatchStageEquals($matchStage, ['intArrayProperty' => ['$in' => [1, 2]]]);
+		// Test casting
+		self::assertIsInt($matchExpression['intArrayProperty']['$in'][0]);
+		self::assertIsInt($matchExpression['intArrayProperty']['$in'][1]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testIntEnumArray(): void
+		{
+		$filter                       = new SearchFilter();
+		$filter->intEnumArrayProperty = [IntEnum::FOO, IntEnum::BAR];
+		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                       = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['intEnumArrayProperty' => ['$in' => [IntEnum::FOO->value, IntEnum::BAR->value]]]);
+		// Test casting
+		self::assertIsInt($builtQuery['intEnumArrayProperty']['$in'][0]);
+		self::assertIsInt($builtQuery['intEnumArrayProperty']['$in'][1]);
+		$matchExpression = self::assertBuiltMatchStageEquals($matchStage, ['intEnumArrayProperty' => ['$in' => [IntEnum::FOO->value, IntEnum::BAR->value]]]);
+		// Test casting
+		self::assertIsInt($matchExpression['intEnumArrayProperty']['$in'][0]);
+		self::assertIsInt($matchExpression['intEnumArrayProperty']['$in'][1]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testIntArrayInverted(): void
+		{
+		$filter                           = new SearchFilter();
+		$filter->intArrayInvertedProperty = ['3', '4'];
+		$queryBuilder                     = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                       = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                           = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['intArrayInvertedProperty' => ['$nin' => [3, 4]]]);
+		// Test casting
+		self::assertIsInt($builtQuery['intArrayInvertedProperty']['$nin'][0]);
+		self::assertIsInt($builtQuery['intArrayInvertedProperty']['$nin'][1]);
+		$matchExpression = self::assertBuiltMatchStageEquals($matchStage, ['intArrayInvertedProperty' => ['$nin' => [3, 4]]]);
+		// Test casting
+		self::assertIsInt($matchExpression['intArrayInvertedProperty']['$nin'][0]);
+		self::assertIsInt($matchExpression['intArrayInvertedProperty']['$nin'][1]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testDateTimeRangeFrom(): void
 		{
 		$filter                            = new SearchFilter();
@@ -145,40 +231,6 @@ class SearchParamTest extends BaseTestCase
 		$matchExpression = $matchStage->getExpression();
 		self::assertArrayHasKey('$gte', $matchExpression['$match']['rangeDateTimeFromProperty']);
 		self::assertInstanceOf(UTCDateTime::class, $matchExpression['$match']['rangeDateTimeFromProperty']['$gte']);
-		}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public function testRangeIntFrom(): void
-		{
-		$filter                       = new SearchFilter();
-		$filter->rangeIntFromProperty = '10';
-		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                       = new SearchParamParser();
-
-		$parser->parse($filter, $queryBuilder);
-		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntFromProperty' => ['$gte' => 10]]);
-		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntFromProperty' => ['$gte' => 10]]);
-		}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public function testRangeIntTo(): void
-		{
-		$filter                     = new SearchFilter();
-		$filter->rangeIntToProperty = '50';
-		$queryBuilder               = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                 = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                     = new SearchParamParser();
-
-		$parser->parse($filter, $queryBuilder);
-		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntToProperty' => ['$lte' => 50]]);
-		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntToProperty' => ['$lte' => 50]]);
 		}
 
 	/**
@@ -218,6 +270,57 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testRangeIntFrom(): void
+		{
+		$filter                       = new SearchFilter();
+		$filter->rangeIntFromProperty = '10';
+		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                       = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntFromProperty' => ['$gte' => 10]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntFromProperty' => ['$gte' => 10]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testRangeIntTo(): void
+		{
+		$filter                     = new SearchFilter();
+		$filter->rangeIntToProperty = '50';
+		$queryBuilder               = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                 = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                     = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntToProperty' => ['$lte' => 50]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntToProperty' => ['$lte' => 50]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testString(): void
+		{
+		$filter                 = new SearchFilter();
+		$filter->stringProperty = 'foo';
+		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                 = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringProperty' => 'foo']);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringProperty' => 'foo']);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testStringArray(): void
 		{
 		$filter                      = new SearchFilter();
@@ -252,80 +355,51 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testIntegerArray(): void
+	public function testStringEnum(): void
 		{
-		$filter                       = new SearchFilter();
-		$filter->integerArrayProperty = ['1', '2'];
-		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                       = new SearchParamParser();
+		$filter                     = new SearchFilter();
+		$filter->stringEnumProperty = StringEnum::FOO;
+		$queryBuilder               = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                 = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                     = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
-		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['integerArrayProperty' => ['$in' => [1, 2]]]);
-		// Test casting
-		self::assertIsInt($builtQuery['integerArrayProperty']['$in'][0]);
-		self::assertIsInt($builtQuery['integerArrayProperty']['$in'][1]);
-		$matchExpression = self::assertBuiltMatchStageEquals($matchStage, ['integerArrayProperty' => ['$in' => [1, 2]]]);
-		// Test casting
-		self::assertIsInt($matchExpression['integerArrayProperty']['$in'][0]);
-		self::assertIsInt($matchExpression['integerArrayProperty']['$in'][1]);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringEnumProperty' => 'foo']);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringEnumProperty' => 'foo']);
 		}
 
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testIntegerArrayInverted(): void
+	public function testStringEnumArray(): void
 		{
-		$filter                               = new SearchFilter();
-		$filter->integerArrayInvertedProperty = ['3', '4'];
-		$queryBuilder                         = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage                           = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                               = new SearchParamParser();
+		$filter                          = new SearchFilter();
+		$filter->stringEnumArrayProperty = [StringEnum::FOO, StringEnum::BAR];
+		$queryBuilder                    = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                      = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                          = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
-		$builtQuery = self::assertBuiltQueryEquals($queryBuilder, ['integerArrayInvertedProperty' => ['$nin' => [3, 4]]]);
-		// Test casting
-		self::assertIsInt($builtQuery['integerArrayInvertedProperty']['$nin'][0]);
-		self::assertIsInt($builtQuery['integerArrayInvertedProperty']['$nin'][1]);
-		$matchExpression = self::assertBuiltMatchStageEquals($matchStage, ['integerArrayInvertedProperty' => ['$nin' => [3, 4]]]);
-		// Test casting
-		self::assertIsInt($matchExpression['integerArrayInvertedProperty']['$nin'][0]);
-		self::assertIsInt($matchExpression['integerArrayInvertedProperty']['$nin'][1]);
+		self::assertBuiltQueryEquals($queryBuilder, ['stringEnumArrayProperty' => ['$in' => [StringEnum::FOO->value, StringEnum::BAR->value]]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['stringEnumArrayProperty' => ['$in' => [StringEnum::FOO->value, StringEnum::BAR->value]]]);
 		}
 
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testFieldAlias(): void
+	public function testVirtualBool(): void
 		{
-		$filter                = new SearchFilter();
-		$filter->aliasProperty = 'foo';
-		$queryBuilder          = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage            = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                = new SearchParamParser();
+		$filter                      = new SearchFilter();
+		$filter->virtualBoolProperty = true;
+		$queryBuilder                = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                  = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                      = new SearchParamParser();
 
 		$parser->parse($filter, $queryBuilder);
 		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['alias' => 'foo']);
-		self::assertBuiltMatchStageEquals($matchStage, ['alias' => 'foo']);
-		}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public function testCallable(): void
-		{
-		$filter                   = new SearchFilter();
-		$filter->callableProperty = 4;
-		$queryBuilder             = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage               = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                   = new SearchParamParser();
-
-		$parser->parse($filter, $queryBuilder);
-		$parser->parse($filter, $matchStage);
-		self::assertBuiltQueryEquals($queryBuilder, ['foo' => 4]);
-		self::assertBuiltMatchStageEquals($matchStage, ['foo' => 4]);
+		self::assertBuiltQueryEquals($queryBuilder, ['virtualBoolProperty' => ['$gte' => 1]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['virtualBoolProperty' => ['$gte' => 1]]);
 		}
 	}
