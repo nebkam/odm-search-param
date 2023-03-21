@@ -54,6 +54,12 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::RangeInt, direction: SearchParamDirection::To)]
 	public ?string $rangeIntToProperty = null;
 
+	#[SearchParam(type: SearchParamType::RangeIntEnum, direction: SearchParamDirection::From)]
+	public ?IntEnum $rangeIntEnumFromProperty = null;
+
+	#[SearchParam(type: SearchParamType::RangeIntEnum, direction: SearchParamDirection::To)]
+	public ?IntEnum $rangeIntEnumToProperty = null;
+
 	#[SearchParam(type: SearchParamType::String)]
 	public ?string $stringProperty = null;
 

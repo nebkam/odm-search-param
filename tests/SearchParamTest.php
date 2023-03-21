@@ -304,6 +304,40 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testRangeIntEnumFrom(): void
+		{
+		$filter                           = new SearchFilter();
+		$filter->rangeIntEnumFromProperty = IntEnum::BAR;
+		$queryBuilder                     = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                       = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                           = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntEnumFromProperty' => ['$gte' => IntEnum::BAR->value]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntEnumFromProperty' => ['$gte' => IntEnum::BAR->value]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testRangeEnumIntTo(): void
+		{
+		$filter                         = new SearchFilter();
+		$filter->rangeIntEnumToProperty = IntEnum::FOO;
+		$queryBuilder                   = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                     = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$parser                         = new SearchParamParser();
+
+		$parser->parse($filter, $queryBuilder);
+		$parser->parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntEnumToProperty' => ['$lte' => IntEnum::FOO->value]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntEnumToProperty' => ['$lte' => IntEnum::FOO->value]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testString(): void
 		{
 		$filter                 = new SearchFilter();
