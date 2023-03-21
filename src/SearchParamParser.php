@@ -122,6 +122,13 @@ class SearchParamParser
 								: $builder->field($field)->lte((int)$value);
 							break;
 
+						case SearchParamType::RangeIntEnum:
+							/** @var IntBackedEnum $value */
+							$attribute->direction === SearchParamDirection::From
+								? $builder->field($field)->gte((int)$value->value)
+								: $builder->field($field)->lte((int)$value->value);
+							break;
+
 						case SearchParamType::String:
 							if ($attribute->invert)
 								{
