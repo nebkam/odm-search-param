@@ -5,6 +5,7 @@ namespace Nebkam\OdmSearchParam;
 enum SearchParamType
 	{
 	case Bool;
+	case Callable;
 	case Exists;
 	case Int;
 	case IntArray;
