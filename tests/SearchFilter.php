@@ -15,7 +15,7 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::Bool)]
 	public ?bool $boolProperty = null;
 
-	#[SearchParam(callable: [SearchFilterDependency::class, 'setFoo'])]
+	#[SearchParam(type: SearchParamType::Callable, callable: [SearchFilterDependency::class, 'setFoo'])]
 	public ?int $callableProperty = null;
 
 	#[SearchParam(type: SearchParamType::Exists)]

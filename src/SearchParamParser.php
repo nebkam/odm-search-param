@@ -5,6 +5,7 @@ namespace Nebkam\OdmSearchParam;
 use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use IntBackedEnum;
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 use StringBackedEnum;
@@ -191,13 +192,18 @@ class SearchParamParser
 							$builder->field($field)->gte(1);
 							break;
 
-						default:
-							if ($attribute->callable
-								&& is_callable($attribute->callable))
+						case SearchParamType::Callable:
+							if (!$attribute->callable
+								|| !is_callable($attribute->callable))
 								{
-								call_user_func($attribute->callable, $builder, $value, $this);
+								throw new InvalidArgumentException('Please provide a valid PHP callable in `callable` param');
 								}
+
+							call_user_func($attribute->callable, $builder, $value, $this);
 							break;
+
+						default:
+							throw new InvalidArgumentException('Please provide a valid `type` param');
 						}
 					}
 				}
