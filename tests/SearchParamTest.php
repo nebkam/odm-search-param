@@ -17,7 +17,6 @@ class SearchParamTest extends BaseTestCase
 		{
 		$filter       = new SearchFilter();
 		$queryBuilder = self::createTestQueryBuilder(SearchableDocument::class);
-		$parser       = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 
@@ -33,7 +32,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->aliasProperty = 'foo';
 		$queryBuilder          = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage            = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -50,7 +48,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->boolProperty = true;
 		$queryBuilder         = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage           = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser               = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -67,7 +64,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->boolProperty = false;
 		$queryBuilder         = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage           = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser               = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -84,7 +80,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->callableProperty = 4;
 		$queryBuilder             = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage               = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                   = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -101,7 +96,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->existsProperty = '1';
 		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                 = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -118,7 +112,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->intProperty = '1';
 		$queryBuilder        = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser              = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -135,7 +128,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->intEnumProperty = IntEnum::FOO;
 		$queryBuilder            = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage              = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                  = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -152,7 +144,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->intArrayProperty = ['1', '2'];
 		$queryBuilder             = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage               = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                   = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -175,7 +166,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->intEnumArrayProperty = [IntEnum::FOO, IntEnum::BAR];
 		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                       = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -198,7 +188,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->intArrayInvertedProperty = ['3', '4'];
 		$queryBuilder                     = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                       = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                           = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -221,7 +210,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeDateTimeFromProperty = new DateTime('-1 day');
 		$queryBuilder                      = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                        = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                            = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -242,7 +230,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeFloatFromProperty = '1.1';
 		$queryBuilder                   = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                     = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                         = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -259,7 +246,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeFloatToProperty = '5.0';
 		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                       = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -276,7 +262,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeIntFromProperty = '10';
 		$queryBuilder                 = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                   = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                       = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -293,7 +278,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeIntToProperty = '50';
 		$queryBuilder               = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                 = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                     = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -310,7 +294,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeIntEnumFromProperty = IntEnum::BAR;
 		$queryBuilder                     = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                       = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                           = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -327,7 +310,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->rangeIntEnumToProperty = IntEnum::FOO;
 		$queryBuilder                   = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                     = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                         = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -344,7 +326,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->stringProperty = 'foo';
 		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                 = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -361,7 +342,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->stringArrayProperty = ['foo', 'bar'];
 		$queryBuilder                = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                  = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                      = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -378,7 +358,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->stringArrayInvertedProperty = ['foo', 'bar'];
 		$queryBuilder                        = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                              = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -395,7 +374,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->stringEnumProperty = StringEnum::FOO;
 		$queryBuilder               = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                 = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                     = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -412,7 +390,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->stringEnumArrayProperty = [StringEnum::FOO, StringEnum::BAR];
 		$queryBuilder                    = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                      = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                          = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -429,7 +406,6 @@ class SearchParamTest extends BaseTestCase
 		$filter->virtualBoolProperty = true;
 		$queryBuilder                = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage                  = self::createTestAggregationBuilder(SearchableDocument::class)->match();
-		$parser                      = new SearchParamParser();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
