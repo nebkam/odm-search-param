@@ -13,9 +13,11 @@ use StringBackedEnum;
 class SearchParamParser
 	{
 	/**
+	 * @param $filter
+	 * @param Builder|MatchStage $builder
 	 * @throws ReflectionException
 	 */
-	public function parse($filter, Builder|MatchStage $builder): void
+	public static function parse($filter, Builder|MatchStage $builder): void
 		{
 		$reflectionClass = new ReflectionClass($filter);
 		foreach ($reflectionClass->getProperties() as $reflectionProperty)
@@ -29,79 +31,26 @@ class SearchParamParser
 				$value     = $reflectionProperty->getValue($filter);
 				if ($value !== null)
 					{
-					switch ($attribute->type)
+					match ($attribute->type)
 						{
-						case SearchParamType::Bool:
-							self::setBool($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::Exists:
-							self::setExists($builder, $field, $value);
-							break;
-
-						case SearchParamType::Int:
-							self::setInt($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::IntArray:
-							self::setIntArray($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::IntEnum:
-							self::setIntEnum($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::IntEnumArray:
-							self::setIntEnumArray($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::IntGt:
-							self::setIntGt($builder, $field);
-							break;
-
-						case SearchParamType::Range:
-							self::setRange($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::RangeFloat:
-							self::setRangeFloat($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::RangeInt:
-							self::setRangeInt($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::RangeIntEnum:
-							self::setRangeIntEnum($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::String:
-							self::setString($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::StringArray:
-							self::setStringArray($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::StringEnum:
-							self::setStringEnum($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::StringEnumArray:
-							self::setStringEnumArray($attribute, $builder, $field, $value);
-							break;
-
-						case SearchParamType::VirtualBool:
-							self::setVirtualBoolean($builder, $field);
-							break;
-
-						case SearchParamType::Callable:
-							self::setCallable($attribute, $builder, $value, $filter);
-							break;
-
-						default:
-							throw new InvalidArgumentException('Please provide a valid `type` param');
-						}
+						SearchParamType::Bool => self::setBool($attribute, $builder, $field, $value),
+						SearchParamType::Callable => self::setCallable($attribute, $builder, $value, $filter),
+						SearchParamType::Exists => self::setExists($builder, $field, $value),
+						SearchParamType::Int => self::setInt($attribute, $builder, $field, $value),
+						SearchParamType::IntArray => self::setIntArray($attribute, $builder, $field, $value),
+						SearchParamType::IntEnum => self::setIntEnum($attribute, $builder, $field, $value),
+						SearchParamType::IntEnumArray => self::setIntEnumArray($attribute, $builder, $field, $value),
+						SearchParamType::IntGt => self::setIntGt($builder, $field),
+						SearchParamType::Range => self::setRange($attribute, $builder, $field, $value),
+						SearchParamType::RangeFloat => self::setRangeFloat($attribute, $builder, $field, $value),
+						SearchParamType::RangeInt => self::setRangeInt($attribute, $builder, $field, $value),
+						SearchParamType::RangeIntEnum => self::setRangeIntEnum($attribute, $builder, $field, $value),
+						SearchParamType::String => self::setString($attribute, $builder, $field, $value),
+						SearchParamType::StringArray => self::setStringArray($attribute, $builder, $field, $value),
+						SearchParamType::StringEnum => self::setStringEnum($attribute, $builder, $field, $value),
+						SearchParamType::StringEnumArray => self::setStringEnumArray($attribute, $builder, $field, $value),
+						SearchParamType::VirtualBool => self::setVirtualBoolean($builder, $field),
+						};
 					}
 				}
 			}
