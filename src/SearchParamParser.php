@@ -25,7 +25,7 @@ class SearchParamParser
 			$reflectionAttributes = $reflectionProperty->getAttributes(SearchParam::class);
 			if (!empty($reflectionAttributes))
 				{
-				foreach($reflectionAttributes as $reflectionAttribute)
+				foreach ($reflectionAttributes as $reflectionAttribute)
 					{
 					/** @var SearchParam $attribute */
 					$attribute = $reflectionAttribute->newInstance();
