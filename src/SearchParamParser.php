@@ -32,174 +32,71 @@ class SearchParamParser
 					switch ($attribute->type)
 						{
 						case SearchParamType::Bool:
-							if ($attribute->invert)
-								{
-								$builder->field($field)->notEqual((bool)$value);
-								}
-							else
-								{
-								$builder->field($field)->equals((bool)$value);
-								}
+							self::setBool($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::Exists:
-							$builder->field($field)->exists((bool)$value);
+							self::setExists($builder, $field, $value);
 							break;
 
 						case SearchParamType::Int:
-							if ($attribute->invert)
-								{
-								$builder->field($field)->notEqual((int)$value);
-								}
-							else
-								{
-								$builder->field($field)->equals((int)$value);
-								}
+							self::setInt($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::IntArray:
-							if (count($value) > 0)
-								{
-								$intValues = array_map(static fn($item) => (int)$item, $value);
-								if ($attribute->invert)
-									{
-									$builder->field($field)->notIn($intValues);
-									}
-								else
-									{
-									$builder->field($field)->in($intValues);
-									}
-								}
+							self::setIntArray($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::IntEnum:
-							/** @var IntBackedEnum $value */
-							if ($attribute->invert)
-								{
-								$builder->field($field)->notEqual($value->value);
-								}
-							else
-								{
-								$builder->field($field)->equals($value->value);
-								}
+							self::setIntEnum($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::IntEnumArray:
-							/** @var IntBackedEnum[] $value */
-							if (count($value) > 0)
-								{
-								$intValues = array_map(static fn($item) => $item->value, $value);
-								if ($attribute->invert)
-									{
-									$builder->field($field)->notIn($intValues);
-									}
-								else
-									{
-									$builder->field($field)->in($intValues);
-									}
-								}
+							self::setIntEnumArray($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::IntGt:
-							$builder->field($field)->exists(true);
-							$builder->field($field)->gte(1);
+							self::setIntGt($builder, $field);
 							break;
 
 						case SearchParamType::Range:
-							$attribute->direction === SearchParamDirection::From
-								? $builder->field($field)->gte($value)
-								: $builder->field($field)->lte($value);
+							self::setRange($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::RangeFloat:
-							$attribute->direction === SearchParamDirection::From
-								? $builder->field($field)->gte((float)$value)
-								: $builder->field($field)->lte((float)$value);
+							self::setRangeFloat($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::RangeInt:
-							$attribute->direction === SearchParamDirection::From
-								? $builder->field($field)->gte((int)$value)
-								: $builder->field($field)->lte((int)$value);
+							self::setRangeInt($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::RangeIntEnum:
-							/** @var IntBackedEnum $value */
-							$attribute->direction === SearchParamDirection::From
-								? $builder->field($field)->gte((int)$value->value)
-								: $builder->field($field)->lte((int)$value->value);
+							self::setRangeIntEnum($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::String:
-							if ($attribute->invert)
-								{
-								$builder->field($field)->notEqual((string)$value);
-								}
-							else
-								{
-								$builder->field($field)->equals((string)$value);
-								}
+							self::setString($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::StringArray:
-							if (count($value) > 0)
-								{
-								if ($attribute->invert)
-									{
-									$builder->field($field)->notIn($value);
-									}
-								else
-									{
-									$builder->field($field)->in($value);
-									}
-								}
+							self::setStringArray($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::StringEnum:
-							/**
-							 * @var StringBackedEnum $value
-							 */
-							if ($attribute->invert)
-								{
-								$builder->field($field)->notEqual($value->value);
-								}
-							else
-								{
-								$builder->field($field)->equals($value->value);
-								}
+							self::setStringEnum($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::StringEnumArray:
-							/**
-							 * @var StringBackedEnum[] $value
-							 */
-							if (count($value) > 0)
-								{
-								$stringValues = array_map(static fn($item) => $item->value, $value);
-								if ($attribute->invert)
-									{
-									$builder->field($field)->notIn($stringValues);
-									}
-								else
-									{
-									$builder->field($field)->in($stringValues);
-									}
-								}
+							self::setStringEnumArray($attribute, $builder, $field, $value);
 							break;
 
 						case SearchParamType::VirtualBool:
-							//Virtual booleans are stored as integers, but are sent as booleans in search
-							$builder->field($field)->gte(1);
+							self::setVirtualBoolean($builder, $field);
 							break;
 
 						case SearchParamType::Callable:
-							if (!$attribute->callable
-								|| !is_callable($attribute->callable))
-								{
-								throw new InvalidArgumentException('Please provide a valid PHP callable in `callable` param');
-								}
-
-							call_user_func($attribute->callable, $builder, $value, $this);
+							self::setCallable($attribute, $builder, $value, $filter);
 							break;
 
 						default:
@@ -208,5 +105,219 @@ class SearchParamParser
 					}
 				}
 			}
+		}
+
+	private static function setBool(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		if ($attribute->invert)
+			{
+			$builder->field($field)->notEqual((bool)$value);
+			}
+		else
+			{
+			$builder->field($field)->equals((bool)$value);
+			}
+		}
+
+	private static function setCallable(SearchParam $attribute, Builder|MatchStage $builder, $value, $filter): void
+		{
+		if (!$attribute->callable
+			|| !is_callable($attribute->callable))
+			{
+			throw new InvalidArgumentException('Please provide a valid PHP callable in `callable` param');
+			}
+
+		call_user_func($attribute->callable, $builder, $value, $filter);
+		}
+
+	private static function setExists(Builder|MatchStage $builder, string $field, $value): void
+		{
+		$builder->field($field)->exists((bool)$value);
+		}
+
+	private static function setInt(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		if ($attribute->invert)
+			{
+			$builder->field($field)->notEqual((int)$value);
+			}
+		else
+			{
+			$builder->field($field)->equals((int)$value);
+			}
+		}
+
+	private static function setIntArray(SearchParam $attribute, Builder|MatchStage $builder, string $field, $values): void
+		{
+		if (count($values) > 0)
+			{
+			$intValues = array_map(static fn($item) => (int)$item, $values);
+			if ($attribute->invert)
+				{
+				$builder->field($field)->notIn($intValues);
+				}
+			else
+				{
+				$builder->field($field)->in($intValues);
+				}
+			}
+		}
+
+	/**
+	 * @param SearchParam $attribute
+	 * @param Builder|MatchStage $builder
+	 * @param string $field
+	 * @var IntBackedEnum $value
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	private static function setIntEnum(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		if ($attribute->invert)
+			{
+			$builder->field($field)->notEqual($value->value);
+			}
+		else
+			{
+			$builder->field($field)->equals($value->value);
+			}
+		}
+
+	/**
+	 * @param SearchParam $attribute
+	 * @param Builder|MatchStage $builder
+	 * @param string $field
+	 * @param IntBackedEnum[] $values
+	 * @return void
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	private static function setIntEnumArray(SearchParam $attribute, Builder|MatchStage $builder, string $field, $values): void
+		{
+		if (count($values) > 0)
+			{
+			$intValues = array_map(static fn($item) => $item->value, $values);
+			if ($attribute->invert)
+				{
+				$builder->field($field)->notIn($intValues);
+				}
+			else
+				{
+				$builder->field($field)->in($intValues);
+				}
+			}
+		}
+
+	private static function setIntGt(Builder|MatchStage $builder, string $field): void
+		{
+		$builder
+			->field($field)->exists(true)
+			->field($field)->gte(1);
+		}
+
+	private static function setRange(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		$attribute->direction === SearchParamDirection::From
+			? $builder->field($field)->gte($value)
+			: $builder->field($field)->lte($value);
+		}
+
+	private static function setRangeFloat(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		$attribute->direction === SearchParamDirection::From
+			? $builder->field($field)->gte((float)$value)
+			: $builder->field($field)->lte((float)$value);
+		}
+
+	private static function setRangeInt(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		$attribute->direction === SearchParamDirection::From
+			? $builder->field($field)->gte((int)$value)
+			: $builder->field($field)->lte((int)$value);
+		}
+
+	/**
+	 * IntBackedEnum $value
+	 */
+	private static function setRangeIntEnum(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		$attribute->direction === SearchParamDirection::From
+			? $builder->field($field)->gte((int)$value->value)
+			: $builder->field($field)->lte((int)$value->value);
+		}
+
+	private static function setString(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		if ($attribute->invert)
+			{
+			$builder->field($field)->notEqual((string)$value);
+			}
+		else
+			{
+			$builder->field($field)->equals((string)$value);
+			}
+		}
+
+	private static function setStringArray(SearchParam $attribute, Builder|MatchStage $builder, string $field, $values): void
+		{
+		if (count($values) > 0)
+			{
+			if ($attribute->invert)
+				{
+				$builder->field($field)->notIn($values);
+				}
+			else
+				{
+				$builder->field($field)->in($values);
+				}
+			}
+		}
+
+	/**
+	 * @param SearchParam $attribute
+	 * @param Builder|MatchStage $builder
+	 * @param string $field
+	 * @param StringBackedEnum $value
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	private static function setStringEnum(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
+		{
+		if ($attribute->invert)
+			{
+			$builder->field($field)->notEqual($value->value);
+			}
+		else
+			{
+			$builder->field($field)->equals($value->value);
+			}
+		}
+
+	/**
+	 * @param SearchParam $attribute
+	 * @param Builder|MatchStage $builder
+	 * @param string $field
+	 * @var StringBackedEnum[] $values
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	private static function setStringEnumArray(SearchParam $attribute, Builder|MatchStage $builder, string $field, $values): void
+		{
+		if (count($values) > 0)
+			{
+			$stringValues = array_map(static fn($enum) => $enum->value, $values);
+			if ($attribute->invert)
+				{
+				$builder->field($field)->notIn($stringValues);
+				}
+			else
+				{
+				$builder->field($field)->in($stringValues);
+				}
+			}
+		}
+
+	/**
+	 * Virtual booleans are stored as integers, but are sent as booleans in search
+	 */
+	private static function setVirtualBoolean(Builder|MatchStage $builder, string $field): void
+		{
+		$builder->field($field)->gte(1);
 		}
 	}
