@@ -22,35 +22,38 @@ class SearchParamParser
 		$reflectionClass = new ReflectionClass($filter);
 		foreach ($reflectionClass->getProperties() as $reflectionProperty)
 			{
-			$attributes = $reflectionProperty->getAttributes(SearchParam::class);
-			if (!empty($attributes))
+			$reflectionAttributes = $reflectionProperty->getAttributes(SearchParam::class);
+			if (!empty($reflectionAttributes))
 				{
-				/** @var SearchParam $attribute */
-				$attribute = $attributes[0]->newInstance();
-				$field     = $attribute->field ?: $reflectionProperty->getName();
-				$value     = $reflectionProperty->getValue($filter);
-				if ($value !== null)
+				foreach($reflectionAttributes as $reflectionAttribute)
 					{
-					match ($attribute->type)
+					/** @var SearchParam $attribute */
+					$attribute = $reflectionAttribute->newInstance();
+					$field     = $attribute->field ?: $reflectionProperty->getName();
+					$value     = $reflectionProperty->getValue($filter);
+					if ($value !== null)
 						{
-						SearchParamType::Bool => self::setBool($attribute, $builder, $field, $value),
-						SearchParamType::Callable => self::setCallable($attribute, $builder, $value, $filter),
-						SearchParamType::Exists => self::setExists($builder, $field, $value),
-						SearchParamType::Int => self::setInt($attribute, $builder, $field, $value),
-						SearchParamType::IntArray => self::setIntArray($attribute, $builder, $field, $value),
-						SearchParamType::IntEnum => self::setIntEnum($attribute, $builder, $field, $value),
-						SearchParamType::IntEnumArray => self::setIntEnumArray($attribute, $builder, $field, $value),
-						SearchParamType::IntGt => self::setIntGt($builder, $field),
-						SearchParamType::Range => self::setRange($attribute, $builder, $field, $value),
-						SearchParamType::RangeFloat => self::setRangeFloat($attribute, $builder, $field, $value),
-						SearchParamType::RangeInt => self::setRangeInt($attribute, $builder, $field, $value),
-						SearchParamType::RangeIntEnum => self::setRangeIntEnum($attribute, $builder, $field, $value),
-						SearchParamType::String => self::setString($attribute, $builder, $field, $value),
-						SearchParamType::StringArray => self::setStringArray($attribute, $builder, $field, $value),
-						SearchParamType::StringEnum => self::setStringEnum($attribute, $builder, $field, $value),
-						SearchParamType::StringEnumArray => self::setStringEnumArray($attribute, $builder, $field, $value),
-						SearchParamType::VirtualBool => self::setVirtualBoolean($builder, $field),
-						};
+						match ($attribute->type)
+							{
+							SearchParamType::Bool => self::setBool($attribute, $builder, $field, $value),
+							SearchParamType::Callable => self::setCallable($attribute, $builder, $value, $filter),
+							SearchParamType::Exists => self::setExists($builder, $field, $value),
+							SearchParamType::Int => self::setInt($attribute, $builder, $field, $value),
+							SearchParamType::IntArray => self::setIntArray($attribute, $builder, $field, $value),
+							SearchParamType::IntEnum => self::setIntEnum($attribute, $builder, $field, $value),
+							SearchParamType::IntEnumArray => self::setIntEnumArray($attribute, $builder, $field, $value),
+							SearchParamType::IntGt => self::setIntGt($builder, $field),
+							SearchParamType::Range => self::setRange($attribute, $builder, $field, $value),
+							SearchParamType::RangeFloat => self::setRangeFloat($attribute, $builder, $field, $value),
+							SearchParamType::RangeInt => self::setRangeInt($attribute, $builder, $field, $value),
+							SearchParamType::RangeIntEnum => self::setRangeIntEnum($attribute, $builder, $field, $value),
+							SearchParamType::String => self::setString($attribute, $builder, $field, $value),
+							SearchParamType::StringArray => self::setStringArray($attribute, $builder, $field, $value),
+							SearchParamType::StringEnum => self::setStringEnum($attribute, $builder, $field, $value),
+							SearchParamType::StringEnumArray => self::setStringEnumArray($attribute, $builder, $field, $value),
+							SearchParamType::VirtualBool => self::setVirtualBoolean($builder, $field),
+							};
+						}
 					}
 				}
 			}
