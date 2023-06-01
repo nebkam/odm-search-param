@@ -4,7 +4,7 @@ namespace Nebkam\OdmSearchParam;
 
 use Attribute;
 
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
 class SearchParam
 	{
 	public function __construct(
