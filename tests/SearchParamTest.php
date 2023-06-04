@@ -106,6 +106,22 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
+	public function testExistsInverted(): void
+		{
+		$filter                 = new SearchFilter();
+		$filter->existsInvertedProperty = '1';
+		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+
+		SearchParamParser::parse($filter, $queryBuilder);
+		SearchParamParser::parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['existsInvertedProperty' => ['$exists' => false]]);
+		self::assertBuiltMatchStageEquals($matchStage, ['existsInvertedProperty' => ['$exists' => false]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
 	public function testInt(): void
 		{
 		$filter              = new SearchFilter();

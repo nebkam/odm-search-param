@@ -21,6 +21,9 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::Exists)]
 	public ?string $existsProperty = null;
 
+	#[SearchParam(type: SearchParamType::Exists, invert: true)]
+	public ?string $existsInvertedProperty = null;
+
 	#[SearchParam(type: SearchParamType::Int)]
 	public ?string $intProperty = null;
 

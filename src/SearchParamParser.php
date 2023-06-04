@@ -37,7 +37,7 @@ class SearchParamParser
 							{
 							SearchParamType::Bool => self::setBool($attribute, $builder, $field, $value),
 							SearchParamType::Callable => self::setCallable($attribute, $builder, $value, $filter),
-							SearchParamType::Exists => self::setExists($builder, $field, $value),
+							SearchParamType::Exists => self::setExists($attribute, $builder, $field, $value),
 							SearchParamType::Int => self::setInt($attribute, $builder, $field, $value),
 							SearchParamType::IntArray => self::setIntArray($attribute, $builder, $field, $value),
 							SearchParamType::IntEnum => self::setIntEnum($attribute, $builder, $field, $value),
@@ -82,9 +82,10 @@ class SearchParamParser
 		call_user_func($attribute->callable, $builder, $value, $filter);
 		}
 
-	private static function setExists(Builder|MatchStage $builder, string $field, $value): void
+	private static function setExists(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
 		{
-		$builder->field($field)->exists((bool)$value);
+		$exists = $attribute->invert ? !$value : (bool)$value;
+		$builder->field($field)->exists($exists);
 		}
 
 	private static function setInt(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void
