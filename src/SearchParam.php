@@ -12,7 +12,8 @@ class SearchParam
 		public ?SearchParamDirection $direction = null,
 		public ?string               $field = null,
 		public ?array                $callable = null,
-		public ?bool                 $invert = null
+		public ?bool                 $invert = null,
+		public ?string               $flags = null
 	)
 		{
 		}

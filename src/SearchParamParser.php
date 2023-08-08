@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use IntBackedEnum;
 use InvalidArgumentException;
+use MongoDB\BSON\Regex;
 use ReflectionClass;
 use ReflectionException;
 use StringBackedEnum;
@@ -47,6 +48,7 @@ class SearchParamParser
 							SearchParamType::RangeFloat => self::setRangeFloat($attribute, $builder, $field, $value),
 							SearchParamType::RangeInt => self::setRangeInt($attribute, $builder, $field, $value),
 							SearchParamType::RangeIntEnum => self::setRangeIntEnum($attribute, $builder, $field, $value),
+							SearchParamType::Regex => self::setRegex($attribute, $builder, $field, $value),
 							SearchParamType::String => self::setString($attribute, $builder, $field, $value),
 							SearchParamType::StringArray => self::setStringArray($attribute, $builder, $field, $value),
 							SearchParamType::StringEnum => self::setStringEnum($attribute, $builder, $field, $value),
@@ -195,6 +197,14 @@ class SearchParamParser
 		$attribute->direction === SearchParamDirection::From
 			? $builder->field($field)->gte((int)$value->value)
 			: $builder->field($field)->lte((int)$value->value);
+		}
+
+	private static function setRegex(SearchParam $attribute, Builder|MatchStage $builder, string $field, mixed $value): void
+		{
+		if ($value)
+			{
+			$builder->field($field)->equals(new Regex($value, $attribute->flags ?? ''));
+			}
 		}
 
 	private static function setString(SearchParam $attribute, Builder|MatchStage $builder, string $field, $value): void

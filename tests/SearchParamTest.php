@@ -3,6 +3,7 @@
 namespace Nebkam\OdmSearchParam\Tests;
 
 use DateTime;
+use MongoDB\BSON\Regex;
 use MongoDB\BSON\UTCDateTime;
 use Nebkam\OdmSearchParam\SearchParamParser;
 use Nebkam\OdmSearchParam\Tests\Documents\SearchableDocument;
@@ -331,6 +332,22 @@ class SearchParamTest extends BaseTestCase
 		SearchParamParser::parse($filter, $matchStage);
 		self::assertBuiltQueryEquals($queryBuilder, ['rangeIntEnumToProperty' => ['$lte' => IntEnum::FOO->value]]);
 		self::assertBuiltMatchStageEquals($matchStage, ['rangeIntEnumToProperty' => ['$lte' => IntEnum::FOO->value]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testRegex(): void
+		{
+		$filter                 = new SearchFilter();
+		$filter->regexProperty = 'foo';
+		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+
+		SearchParamParser::parse($filter, $queryBuilder);
+		SearchParamParser::parse($filter, $matchStage);
+		self::assertEquals(new Regex('foo', 'i'), $queryBuilder->getQuery()->debug()['query']['regexProperty']);
+		self::assertEquals(new Regex('foo', 'i'), $matchStage->getExpression()['$match']['regexProperty']);
 		}
 
 	/**

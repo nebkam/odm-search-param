@@ -16,6 +16,7 @@ enum SearchParamType
 	case RangeFloat;
 	case RangeInt;
 	case RangeIntEnum;
+	case Regex;
 	case String;
 	case StringArray;
 	case StringEnum;
