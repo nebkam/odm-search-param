@@ -109,10 +109,10 @@ class SearchParamTest extends BaseTestCase
 	 */
 	public function testExistsInverted(): void
 		{
-		$filter                 = new SearchFilter();
+		$filter                         = new SearchFilter();
 		$filter->existsInvertedProperty = '1';
-		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$queryBuilder                   = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage                     = self::createTestAggregationBuilder(SearchableDocument::class)->match();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -339,10 +339,10 @@ class SearchParamTest extends BaseTestCase
 	 */
 	public function testRegex(): void
 		{
-		$filter                 = new SearchFilter();
+		$filter                = new SearchFilter();
 		$filter->regexProperty = 'foo';
-		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
-		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		$queryBuilder          = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage            = self::createTestAggregationBuilder(SearchableDocument::class)->match();
 
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
@@ -444,5 +444,33 @@ class SearchParamTest extends BaseTestCase
 		SearchParamParser::parse($filter, $matchStage);
 		self::assertBuiltQueryEquals($queryBuilder, ['virtualBoolProperty' => ['$gte' => 1]]);
 		self::assertBuiltMatchStageEquals($matchStage, ['virtualBoolProperty' => ['$gte' => 1]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testWithingBoundaryBox(): void
+		{
+		$filter              = new SearchFilter();
+		$filter->mapBoundary = [20.441587, 44.806884, 20.482464, 44.821999];
+		$queryBuilder        = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		SearchParamParser::parse($filter, $queryBuilder);
+		SearchParamParser::parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, ['mapBoundary' => ['$geoWithin' => ['$box' =>[[20.441587, 44.806884], [20.482464, 44.821999]]]]]);
+		}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function testWrongValueTypeForWithingBoundaryBox(): void
+		{
+		$filter              = new SearchFilter();
+		$filter->wrongMapBoundary = '20.441587, 44.806884, 20.482464, 44.821999';
+		$queryBuilder        = self::createTestQueryBuilder(SearchableDocument::class);
+		$matchStage          = self::createTestAggregationBuilder(SearchableDocument::class)->match();
+		SearchParamParser::parse($filter, $queryBuilder);
+		SearchParamParser::parse($filter, $matchStage);
+		self::assertBuiltQueryEquals($queryBuilder, []);
 		}
 	}

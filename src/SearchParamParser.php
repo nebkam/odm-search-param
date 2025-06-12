@@ -54,6 +54,7 @@ class SearchParamParser
 							SearchParamType::StringEnum => self::setStringEnum($attribute, $builder, $field, $value),
 							SearchParamType::StringEnumArray => self::setStringEnumArray($attribute, $builder, $field, $value),
 							SearchParamType::VirtualBool => self::setVirtualBoolean($builder, $field),
+							SearchParamType::WithinBox => self::setWithinBox($builder, $field, $value),
 							};
 						}
 					}
@@ -282,5 +283,22 @@ class SearchParamParser
 	private static function setVirtualBoolean(Builder|MatchStage $builder, string $field): void
 		{
 		$builder->field($field)->gte(1);
+		}
+
+	/**
+	 * GeoSpatial search within a boundary box, sending `Bottom left` and `Top right` coordinates
+	 * @param Builder|MatchStage $builder
+	 * @param string $field
+	 * @param array{0: float, 1: float, 2: float, 3: float}|mixed $value
+	 * @return void
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	private static function setWithinBox(Builder|MatchStage $builder, string $field, $value): void
+		{
+		if (is_countable($value) && count($value) === 4)
+			{
+			[$bottomLeftX, $bottomLeftY, $topRightX, $topRightY] = $value;
+			$builder->field($field)->geoWithinBox($bottomLeftX, $bottomLeftY, $topRightX, $topRightY);
+			}
 		}
 	}
