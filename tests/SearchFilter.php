@@ -86,4 +86,13 @@ class SearchFilter
 
 	#[SearchParam(type: SearchParamType::VirtualBool)]
 	public ?bool $virtualBoolProperty = null;
+
+	/**
+	 * @var float[]|null
+	 */
+	#[SearchParam(type: SearchParamType::WithinBox)]
+	public ?array $mapBoundary = null;
+
+	#[SearchParam(type: SearchParamType::WithinBox)]
+	public ?string $wrongMapBoundary = null;
 	}
