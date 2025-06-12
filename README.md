@@ -125,3 +125,6 @@ class SomeClass
     }
 }
 ```
+
+## Testing
+- run `docker.sh`
