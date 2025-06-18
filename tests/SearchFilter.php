@@ -90,9 +90,9 @@ class SearchFilter
 	/**
 	 * @var float[]|null
 	 */
-	#[SearchParam(type: SearchParamType::WithinBox)]
+	#[SearchParam(type: SearchParamType::GeoWithinBox)]
 	public ?array $mapBoundary = null;
 
-	#[SearchParam(type: SearchParamType::WithinBox)]
+	#[SearchParam(type: SearchParamType::GeoWithinBox)]
 	public ?string $wrongMapBoundary = null;
 	}

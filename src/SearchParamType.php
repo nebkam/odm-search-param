@@ -7,6 +7,7 @@ enum SearchParamType
 	case Bool;
 	case Callable;
 	case Exists;
+	case GeoWithinBox;
 	case Int;
 	case IntArray;
 	case IntEnum;
@@ -22,5 +23,4 @@ enum SearchParamType
 	case StringEnum;
 	case StringEnumArray;
 	case VirtualBool;
-	case WithinBox;
 	}
