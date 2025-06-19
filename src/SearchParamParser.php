@@ -4,6 +4,7 @@ namespace Nebkam\OdmSearchParam;
 
 use Doctrine\ODM\MongoDB\Aggregation\Stage\MatchStage;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use GeoJson\Geometry\Polygon;
 use IntBackedEnum;
 use InvalidArgumentException;
 use MongoDB\BSON\Regex;
@@ -40,6 +41,7 @@ class SearchParamParser
 							SearchParamType::Callable => self::setCallable($attribute, $builder, $value, $filter),
 							SearchParamType::Exists => self::setExists($attribute, $builder, $field, $value),
 							SearchParamType::GeoWithinBox => self::setGeoWithinBox($builder, $field, $value),
+							SearchParamType::GeoWithinPolygon => self::setGeoWithinPolygon($builder, $field, $value),
 							SearchParamType::Int => self::setInt($attribute, $builder, $field, $value),
 							SearchParamType::IntArray => self::setIntArray($attribute, $builder, $field, $value),
 							SearchParamType::IntEnum => self::setIntEnum($attribute, $builder, $field, $value),
@@ -105,6 +107,23 @@ class SearchParamParser
 			{
 			[$bottomLeftX, $bottomLeftY, $topRightX, $topRightY] = $value;
 			$builder->field($field)->geoWithinBox($bottomLeftX, $bottomLeftY, $topRightX, $topRightY);
+			}
+		}
+
+	private static function setGeoWithinPolygon(Builder|MatchStage $builder, string $field, mixed $value): void
+		{
+		if (is_countable($value) && count($value) === 4)
+			{
+			[$minLon, $minLat, $maxLon, $maxLat] = $value;
+			$builder->field($field)->geoWithin(new Polygon([
+				[
+					[$minLon, $minLat],  // bottom-left
+					[$maxLon, $minLat],  // bottom-right
+					[$maxLon, $maxLat],  // top-right
+					[$minLon, $maxLat],  // top-left
+					[$minLon, $minLat],  // close loop
+				]
+			]));
 			}
 		}
 

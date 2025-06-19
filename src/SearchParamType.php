@@ -8,6 +8,7 @@ enum SearchParamType
 	case Callable;
 	case Exists;
 	case GeoWithinBox;
+	case GeoWithinPolygon;
 	case Int;
 	case IntArray;
 	case IntEnum;
