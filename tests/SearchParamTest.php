@@ -463,16 +463,16 @@ class SearchParamTest extends BaseTestCase
 	/**
 	 * @throws ReflectionException
 	 */
-	public function testGeoWithingPolygon(): void
+	public function testGeoWithingPolygonBox(): void
 		{
 		$filter                 = new SearchFilter();
-		$filter->geoMapBoundary = [20.441587, 44.806884, 20.482464, 44.821999];
+		$filter->boxCoordinates = [20.441587, 44.806884, 20.482464, 44.821999];
 		$queryBuilder           = self::createTestQueryBuilder(SearchableDocument::class);
 		$matchStage             = self::createTestAggregationBuilder(SearchableDocument::class)->match();
 		SearchParamParser::parse($filter, $queryBuilder);
 		SearchParamParser::parse($filter, $matchStage);
 		self::assertBuiltQueryEquals($queryBuilder, [
-			'geoMapBoundary' => [
+			'boxCoordinates' => [
 				'$geoWithin' => [
 					'$geometry' => [
 						'type' => 'Polygon',
@@ -488,7 +488,7 @@ class SearchParamTest extends BaseTestCase
 			]
 		]);
 		self::assertBuiltMatchStageEquals($matchStage, [
-			'geoMapBoundary' => [
+			'boxCoordinates' => [
 				'$geoWithin' => [
 					'$geometry' => [
 						'type' => 'Polygon',

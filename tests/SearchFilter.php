@@ -15,6 +15,12 @@ class SearchFilter
 	#[SearchParam(type: SearchParamType::Bool)]
 	public ?bool $boolProperty = null;
 
+	/**
+	 * @var float[]|null
+	 */
+	#[SearchParam(type: SearchParamType::GeoWithinPolygonBox)]
+	public ?array $boxCoordinates = null;
+
 	#[SearchParam(type: SearchParamType::Callable, callable: [SearchFilterDependency::class, 'setFoo'])]
 	public ?int $callableProperty = null;
 
@@ -23,12 +29,6 @@ class SearchFilter
 
 	#[SearchParam(type: SearchParamType::Exists)]
 	public ?string $existsProperty = null;
-
-	/**
-	 * @var float[]|null
-	 */
-	#[SearchParam(type: SearchParamType::GeoWithinPolygon)]
-	public ?array $geoMapBoundary = null;
 
 	#[SearchParam(type: SearchParamType::IntArray, invert: true)]
 	public ?array $intArrayInvertedProperty = null;
