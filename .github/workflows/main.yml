@@ -1,0 +1,30 @@
+name: Tests
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+			php_version: '8.2'
+			extensions: mongodb-1.16.2
+       
+      - name: Install dependencies
+        run: composer install
+        env:
+          COMPOSER_NO_INTERACTION: 1
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit ./tests
