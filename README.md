@@ -1,3 +1,6 @@
+[![Latest Stable Version](https://poser.pugx.org/nebkam/odm-search-param/v)](//packagist.org/packages/nebkam/odm-search-param)
+[![Tests](https://github.com/nebkam/odm-search-param/actions/workflows/main.yml/badge.svg)](https://github.com/nebkam/odm-search-param/actions/workflows/main.yml)
+
 # ODM Search Param
 
 ## Rationale
