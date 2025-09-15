@@ -14,7 +14,7 @@
   },
   "require": {
     "php": "^8.2",
-    "ext-mongodb": "^1.16",
+    "ext-mongodb": "^1.16 || 2.*",
     "doctrine/mongodb-odm": "^2.5"
   },
   "require-dev": {
